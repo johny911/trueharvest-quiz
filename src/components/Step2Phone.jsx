@@ -25,7 +25,9 @@ export default function Step2Phone({ formData, updateForm, nextStep, prevStep })
         className="bg-white shadow-xl rounded-2xl p-6 space-y-6"
       >
         <div className="text-center space-y-1">
-          <h1 className="text-2xl font-semibold text-gray-800">Your Phone Number</h1>
+          <h1 className="text-2xl font-semibold text-gray-800">
+            Thanks, {formData.name || 'there'}!<br />Could you share your phone number?
+          </h1>
           <p className="text-sm text-gray-500">
             We’ll only use this to help you with your oil recommendation or order.
           </p>
@@ -41,7 +43,7 @@ export default function Step2Phone({ formData, updateForm, nextStep, prevStep })
             }}
             placeholder="Enter 10-digit mobile number"
             className={clsx(
-              'w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all',
+              'w-full px-4 py-3 text-[16px] rounded-xl border outline-none transition-all',
               error
                 ? 'border-red-500 ring-1 ring-red-400'
                 : 'border-gray-300 focus:ring-2 focus:ring-green-500'
@@ -52,19 +54,22 @@ export default function Step2Phone({ formData, updateForm, nextStep, prevStep })
           )}
         </div>
 
-        <div className="flex justify-between gap-4">
+        <div className="flex justify-between gap-4 pt-2">
           <button
             onClick={prevStep}
             className="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl transition"
           >
             Back
           </button>
-          <button
-            onClick={handleNext}
-            className="w-1/2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
-          >
-            Next
-          </button>
+          <div className="w-1/2">
+            <button
+              onClick={handleNext}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
+            >
+              Next
+            </button>
+            <p className="text-xs text-gray-400 text-center mt-2">We won’t spam you.</p>
+          </div>
         </div>
       </motion.div>
     </div>
