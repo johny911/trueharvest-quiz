@@ -40,55 +40,61 @@ export default function Step5CurrentOils({ formData, updateForm, nextStep, prevS
       {isLoading ? (
         <LoadingScreen onComplete={nextStep} />
       ) : (
-        <motion.div
-          animate={error ? { x: [-4, 4, -4, 4, 0] } : {}}
-          transition={{ duration: 0.3 }}
-          className="bg-white shadow-xl rounded-2xl p-6 space-y-6"
-        >
-          <div className="text-center space-y-1">
-            <h1 className="text-2xl font-semibold text-gray-800">What oils do you use now?</h1>
-            <p className="text-sm text-gray-500">Choose all that apply</p>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {oilOptions.map((oil) => (
-              <button
-                key={oil}
-                onClick={() => handleToggle(oil)}
-                type="button"
-                className={clsx(
-                  'px-4 py-2 rounded-full text-sm border transition',
-                  selected.includes(oil)
-                    ? 'bg-green-600 text-white border-green-600'
-                    : 'bg-gray-100 text-gray-800 border-gray-300 hover:bg-gray-200'
-                )}
-              >
-                {oil}
-              </button>
-            ))}
-          </div>
-
-          {error && (
-            <p className="text-sm text-red-500 mt-2 text-center">
-              Please select at least one option.
-            </p>
-          )}
-
-          <div className="flex justify-between gap-4 pt-4">
-            <button
+        <>
+          {/* Clean black ← arrow */}
+          <div className="mb-2">
+            <span
               onClick={prevStep}
-              className="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl transition"
+              className="text-2xl text-black font-semibold cursor-pointer select-none"
             >
-              Back
-            </button>
-            <button
-              onClick={handleNext}
-              className="w-1/2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
-            >
-              Get Recommendation
-            </button>
+              ←
+            </span>
           </div>
-        </motion.div>
+
+          <motion.div
+            animate={error ? { x: [-4, 4, -4, 4, 0] } : {}}
+            transition={{ duration: 0.3 }}
+            className="bg-white shadow-xl rounded-2xl p-6 space-y-6"
+          >
+            <div className="text-center space-y-1">
+              <h1 className="text-2xl font-semibold text-gray-800">What oils do you use now?</h1>
+              <p className="text-sm text-gray-500">Choose all that apply</p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {oilOptions.map((oil) => (
+                <button
+                  key={oil}
+                  onClick={() => handleToggle(oil)}
+                  type="button"
+                  className={clsx(
+                    'px-4 py-2 rounded-full text-sm border transition',
+                    selected.includes(oil)
+                      ? 'bg-green-600 text-white border-green-600'
+                      : 'bg-gray-100 text-gray-800 border-gray-300 hover:bg-gray-200'
+                  )}
+                >
+                  {oil}
+                </button>
+              ))}
+            </div>
+
+            {error && (
+              <p className="text-sm text-red-500 mt-2 text-center">
+                Please select at least one option.
+              </p>
+            )}
+
+            <div className="pt-4">
+              <button
+                onClick={handleNext}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
+              >
+                Get Recommendation
+              </button>
+            </div>
+          </motion.div>
+        </>
       )}
     </div>
   );
