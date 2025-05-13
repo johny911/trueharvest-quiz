@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import recommendOils from '../utils/recommendOils';
 
-// Shopify variant map: variant ID → product handle
 const variantInfo = {
   '40442863222856': { handle: 'wood-pressed-groundnut-oil' },
   '40442863255624': { handle: 'wood-pressed-groundnut-oil' },
@@ -41,7 +40,7 @@ export default function Step6Recommendation({ formData, prevStep }) {
         const variant = data.variants.find(v => v.id == variantId);
 
         const qty = Math.max(Math.round(quantity), 1);
-        const price = parseFloat(variant.price) / 100; // convert from paisa to ₹
+        const price = parseFloat(variant.price) / 100;
         const lineTotal = qty * price;
         total += lineTotal;
 
@@ -70,12 +69,11 @@ export default function Step6Recommendation({ formData, prevStep }) {
       const title = id.toString();
       if (
         info.handle.includes(lower.replace(' oil', '').replace(/\s/g, '-')) &&
-        title.includes(volumeText === '1l' ? '22856' : '55624') // match by pattern
+        title.includes(volumeText === '1l' ? '22856' : '55624')
       ) {
         return id;
       }
     }
-    // fallback
     return Object.keys(variantInfo).find(id => variantInfo[id].handle.includes(lower.replace(' oil', '').replace(/\s/g, '-')) && id.includes(volumeText === '1l' ? '6' : '16'));
   };
 
@@ -99,48 +97,60 @@ export default function Step6Recommendation({ formData, prevStep }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-white p-6">
-      <div className="max-w-md w-full space-y-6">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="max-w-md w-full space-y-6 bg-white shadow-xl rounded-2xl p-6">
         {loading ? (
-          <p className="text-center text-gray-600">Calculating your recommendation...</p>
+          <p className="text-center text-gray-500 text-sm">Calculating your recommendation...</p>
         ) : (
           <>
-            <h1 className="text-2xl font-bold text-gray-800 text-center">Hey {formData.name} 👋</h1>
-            <p className="text-center text-gray-600">Here’s what we recommend for your family:</p>
+            <div className="text-center space-y-2">
+              <h1 className="text-2xl font-semibold text-gray-800">Hi {formData.name} 👋</h1>
+              <p className="text-gray-600 text-sm">Based on your answers, here’s what we recommend for your family:</p>
+            </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {summary.map((item, index) => (
-                <div key={index} className="flex items-center border p-2 rounded-lg shadow-sm">
-                  <img src={item.image} alt={item.title} className="w-16 h-16 object-cover rounded mr-4" />
+                <div
+                  key={index}
+                  className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm"
+                >
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-14 h-14 object-cover rounded-md border mr-3"
+                  />
                   <div className="flex-1">
-                    <p className="font-semibold">{item.title}</p>
-                    <p className="text-sm text-gray-600">₹{item.price.toFixed(2)} × {item.quantity}</p>
+                    <p className="text-gray-800 font-medium text-sm">{item.title}</p>
+                    <p className="text-gray-500 text-xs">₹{item.price.toFixed(2)} × {item.quantity}</p>
                   </div>
-                  <p className="font-bold text-right">₹{item.lineTotal.toFixed(2)}</p>
+                  <div className="text-right text-green-700 font-semibold text-sm">
+                    ₹{item.lineTotal.toFixed(2)}
+                  </div>
                 </div>
               ))}
-              <div className="flex justify-between pt-2 border-t text-lg font-semibold">
-                <span>Total</span>
-                <span>₹{totalPrice.toFixed(2)}</span>
-              </div>
+            </div>
+
+            <div className="flex justify-between items-center border-t pt-4 text-base font-semibold text-gray-800">
+              <span>Total</span>
+              <span>₹{totalPrice.toFixed(2)}</span>
             </div>
 
             <a
               href={cartUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition duration-200 text-center"
+              className="w-full block bg-green-600 hover:bg-green-700 text-white text-center font-semibold py-3 rounded-xl transition duration-200 shadow"
             >
               Buy Now
             </a>
 
             {submitted && (
-              <p className="text-center text-sm text-gray-500 mt-3">Your recommendation has been saved.</p>
+              <p className="text-center text-xs text-gray-400 mt-2">Your response has been saved.</p>
             )}
 
             <button
               onClick={prevStep}
-              className="text-sm text-gray-600 underline hover:text-gray-800 mt-3 block mx-auto"
+              className="block text-center w-full text-sm text-gray-500 underline mt-2 hover:text-gray-800"
             >
               Go Back
             </button>
