@@ -8,6 +8,16 @@ export default function Step4ColdPressed({ formData, updateForm, nextStep, prevS
 
   return (
     <div className="w-full">
+      {/* Minimal black ← arrow */}
+      <div className="mb-2">
+        <span
+          onClick={prevStep}
+          className="text-2xl text-black font-semibold cursor-pointer select-none"
+        >
+          ←
+        </span>
+      </div>
+
       <div className="bg-white shadow-xl rounded-2xl p-6 space-y-6 text-center">
         <h1 className="text-2xl font-semibold text-gray-800">Cold-Pressed Oils?</h1>
         <p className="text-sm text-gray-500">
@@ -29,13 +39,6 @@ export default function Step4ColdPressed({ formData, updateForm, nextStep, prevS
             No, we don't use them yet
           </button>
         </div>
-
-        <button
-          onClick={prevStep}
-          className="text-sm text-gray-500 underline hover:text-gray-800 mt-3"
-        >
-          Back
-        </button>
       </div>
     </div>
   );
