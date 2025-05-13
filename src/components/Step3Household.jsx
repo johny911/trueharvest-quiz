@@ -11,6 +11,16 @@ export default function Step3Household({ formData, updateForm, nextStep, prevSte
 
   return (
     <div className="w-full">
+      {/* Clean black ← arrow */}
+      <div className="mb-2">
+        <span
+          onClick={prevStep}
+          className="text-2xl text-black font-semibold cursor-pointer select-none"
+        >
+          ←
+        </span>
+      </div>
+
       <div className="bg-white shadow-xl rounded-2xl p-6 space-y-6">
         <div className="text-center space-y-1">
           <h1 className="text-2xl font-semibold text-gray-800">Your Household</h1>
@@ -43,16 +53,10 @@ export default function Step3Household({ formData, updateForm, nextStep, prevSte
           </div>
         </div>
 
-        <div className="flex justify-between gap-4">
-          <button
-            onClick={prevStep}
-            className="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl transition"
-          >
-            Back
-          </button>
+        <div className="pt-2">
           <button
             onClick={handleNext}
-            className="w-1/2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
           >
             Next
           </button>
