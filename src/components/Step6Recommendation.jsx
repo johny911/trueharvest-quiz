@@ -36,13 +36,12 @@ export default function Step6Recommendation({ formData, prevStep }) {
           : getVariantId(name, '500ml');
         const handle = variantInfo[variantId].handle;
 
-        // Fetch .js endpoint
         const res = await fetch(`https://trueharvest.store/products/${handle}.js`);
         const data = await res.json();
         const variant = data.variants.find(v => v.id == variantId);
 
         const qty = Math.max(Math.round(quantity), 1);
-        const price = parseFloat(variant.price); // price in ₹
+        const price = parseFloat(variant.price) / 100; // 🛠 convert from paisa to ₹
         const lineTotal = qty * price;
         total += lineTotal;
 
@@ -106,14 +105,14 @@ export default function Step6Recommendation({ formData, prevStep }) {
                   <img src={item.image} alt={item.title} className="w-16 h-16 object-cover rounded mr-4" />
                   <div className="flex-1">
                     <p className="font-semibold">{item.title}</p>
-                    <p className="text-sm text-gray-600">₹{item.price} × {item.quantity}</p>
+                    <p className="text-sm text-gray-600">₹{item.price.toFixed(2)} × {item.quantity}</p>
                   </div>
-                  <p className="font-bold text-right">₹{item.lineTotal.toFixed(0)}</p>
+                  <p className="font-bold text-right">₹{item.lineTotal.toFixed(2)}</p>
                 </div>
               ))}
               <div className="flex justify-between pt-2 border-t text-lg font-semibold">
                 <span>Total</span>
-                <span>₹{totalPrice.toFixed(0)}</span>
+                <span>₹{totalPrice.toFixed(2)}</span>
               </div>
             </div>
 
