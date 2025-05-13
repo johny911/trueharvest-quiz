@@ -6,7 +6,9 @@ import Step3Household from './components/Step3Household';
 import Step4ColdPressed from './components/Step4ColdPressed';
 import Step5CurrentOils from './components/Step5CurrentOils';
 import Step6Recommendation from './components/Step6Recommendation';
-import ProgressBar from './components/ProgressBar'; // ✅ Add this line
+import ProgressBar from './components/ProgressBar';
+
+import { AnimatePresence, motion } from 'framer-motion'; // ✅ Import animation
 
 export default function App() {
   const [step, setStep] = useState(1);
@@ -27,23 +29,34 @@ export default function App() {
 
   const props = { formData, updateForm, nextStep, prevStep };
 
+  const getStepComponent = () => {
+    switch (step) {
+      case 1: return <Step1Name {...props} />;
+      case 2: return <Step2Phone {...props} />;
+      case 3: return <Step3Household {...props} />;
+      case 4: return <Step4ColdPressed {...props} />;
+      case 5: return <Step5CurrentOils {...props} />;
+      case 6: return <Step6Recommendation {...props} />;
+      default: return <Step1Name {...props} />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        {/* ✅ Progress bar appears above all steps */}
         <ProgressBar step={step} />
 
-        {(() => {
-          switch (step) {
-            case 1: return <Step1Name {...props} />;
-            case 2: return <Step2Phone {...props} />;
-            case 3: return <Step3Household {...props} />;
-            case 4: return <Step4ColdPressed {...props} />;
-            case 5: return <Step5CurrentOils {...props} />;
-            case 6: return <Step6Recommendation {...props} />;
-            default: return <Step1Name {...props} />;
-          }
-        })()}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.35, ease: 'easeInOut' }}
+          >
+            {getStepComponent()}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
