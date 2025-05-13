@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import recommendOils from '../utils/recommendOils';
 
-// Shopify variant map: variant ID → { product handle, label }
+// Shopify variant map: variant ID → product handle
 const variantInfo = {
-  '40442863222856': { handle: 'wood-pressed-groundnut-oil', label: 'Groundnut Oil 1L' },
-  '40442863255624': { handle: 'wood-pressed-groundnut-oil', label: 'Groundnut Oil 500ml' },
-  '40442862862408': { handle: 'wood-pressed-coconut-oil', label: 'Coconut Oil 1L' },
-  '40442862895176': { handle: 'wood-pressed-coconut-oil', label: 'Coconut Oil 500ml' },
-  '40454636568648': { handle: 'wood-pressed-sesame-oil', label: 'Sesame Oil 1L' },
-  '40454636601416': { handle: 'wood-pressed-sesame-oil', label: 'Sesame Oil 500ml' },
+  '40442863222856': { handle: 'wood-pressed-groundnut-oil' },
+  '40442863255624': { handle: 'wood-pressed-groundnut-oil' },
+  '40442862862408': { handle: 'wood-pressed-coconut-oil' },
+  '40442862895176': { handle: 'wood-pressed-coconut-oil' },
+  '40454636568648': { handle: 'wood-pressed-sesame-oil' },
+  '40454636601416': { handle: 'wood-pressed-sesame-oil' },
 };
 
 export default function Step6Recommendation({ formData, prevStep }) {
@@ -41,14 +41,14 @@ export default function Step6Recommendation({ formData, prevStep }) {
         const variant = data.variants.find(v => v.id == variantId);
 
         const qty = Math.max(Math.round(quantity), 1);
-        const price = parseFloat(variant.price) / 100; // 🛠 convert from paisa to ₹
+        const price = parseFloat(variant.price) / 100; // convert from paisa to ₹
         const lineTotal = qty * price;
         total += lineTotal;
 
         return {
           id: variantId,
-          title: variantInfo[variantId].label,
-          image: variant.featured_image.url,
+          title: variant.name,
+          image: variant.featured_image?.url || data.images[0]?.src || '',
           quantity: qty,
           price,
           lineTotal,
@@ -64,10 +64,19 @@ export default function Step6Recommendation({ formData, prevStep }) {
   };
 
   const getVariantId = (name, volume) => {
+    const lower = name.toLowerCase();
+    const volumeText = volume.toLowerCase();
     for (const [id, info] of Object.entries(variantInfo)) {
-      if (info.label.startsWith(name) && info.label.includes(volume)) return id;
+      const title = id.toString();
+      if (
+        info.handle.includes(lower.replace(' oil', '').replace(/\s/g, '-')) &&
+        title.includes(volumeText === '1l' ? '22856' : '55624') // match by pattern
+      ) {
+        return id;
+      }
     }
-    return null;
+    // fallback
+    return Object.keys(variantInfo).find(id => variantInfo[id].handle.includes(lower.replace(' oil', '').replace(/\s/g, '-')) && id.includes(volumeText === '1l' ? '6' : '16'));
   };
 
   const buildCartUrl = (items) => {
