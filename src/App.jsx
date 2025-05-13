@@ -1,35 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import Step1Name from './components/Step1Name';
+import Step2Phone from './components/Step2Phone';
+import Step3Household from './components/Step3Household';
+import Step4ColdPressed from './components/Step4ColdPressed';
+import Step5CurrentOils from './components/Step5CurrentOils';
+import Step6Recommendation from './components/Step6Recommendation';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    adults: 1,
+    kids: 0,
+    usesColdPressed: null,
+    currentOils: [],
+  });
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  const nextStep = () => setStep((s) => s + 1);
+  const prevStep = () => setStep((s) => s - 1);
+
+  const updateForm = (updates) =>
+    setFormData((prev) => ({ ...prev, ...updates }));
+
+  const props = { formData, updateForm, nextStep, prevStep };
+
+  switch (step) {
+    case 1: return <Step1Name {...props} />;
+    case 2: return <Step2Phone {...props} />;
+    case 3: return <Step3Household {...props} />;
+    case 4: return <Step4ColdPressed {...props} />;
+    case 5: return <Step5CurrentOils {...props} />;
+    case 6: return <Step6Recommendation {...props} />;
+    default: return <Step1Name {...props} />;
+  }
 }
-
-export default App
