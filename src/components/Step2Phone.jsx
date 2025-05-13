@@ -19,11 +19,11 @@ export default function Step2Phone({ formData, updateForm, nextStep, prevStep })
 
   return (
     <div className="w-full">
-      {/* Plain ← arrow above card */}
+      {/* Clean black ← arrow */}
       <div className="mb-2">
         <span
           onClick={prevStep}
-          className="text-xl text-gray-400 hover:text-gray-700 cursor-pointer select-none"
+          className="text-2xl text-black font-semibold cursor-pointer select-none"
         >
           ←
         </span>
