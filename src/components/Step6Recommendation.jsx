@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import recommendOils from '../utils/recommendOils';
+import FinalReport from './FinalReport';
 
 const variantInfo = {
   '40442863222856': { handle: 'wood-pressed-groundnut-oil' },
@@ -96,68 +97,21 @@ export default function Step6Recommendation({ formData, prevStep }) {
     setSubmitted(true);
   };
 
+  if (!loading && submitted) {
+    return (
+      <FinalReport
+        name={formData.name}
+        summary={summary}
+        totalPrice={totalPrice}
+        cartUrl={cartUrl}
+      />
+    );
+  }
+
   return (
     <div className="w-full">
       <div className="bg-white shadow-xl rounded-2xl p-6 space-y-6">
-        {loading ? (
-          <p className="text-center text-gray-500 text-sm">Calculating your recommendation...</p>
-        ) : (
-          <>
-            <div className="text-center space-y-1">
-              <h1 className="text-2xl font-semibold text-gray-800">Hi {formData.name} 👋</h1>
-              <p className="text-sm text-gray-500">Based on your answers, here’s what we recommend:</p>
-            </div>
-
-            <div className="space-y-3">
-              {summary.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center bg-gray-100 rounded-xl p-3"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-14 h-14 object-cover rounded-lg border mr-3"
-                  />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">{item.title}</p>
-                    <p className="text-xs text-gray-500">₹{item.price.toFixed(2)} × {item.quantity}</p>
-                  </div>
-                  <p className="text-sm font-semibold text-green-700 text-right">
-                    ₹{item.lineTotal.toFixed(2)}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex justify-between items-center border-t pt-4 text-base font-semibold text-gray-800">
-              <span>Total</span>
-              <span>₹{totalPrice.toFixed(2)}</span>
-            </div>
-
-            <a
-              href={cartUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full block bg-green-600 hover:bg-green-700 text-white text-center font-semibold py-3 rounded-xl transition"
-            >
-              Buy Now
-            </a>
-
-            {submitted && (
-              <p className="text-center text-xs text-gray-400 mt-2">
-                Your recommendation has been saved.
-              </p>
-            )}
-
-            <button
-              onClick={prevStep}
-              className="text-sm text-gray-500 underline hover:text-gray-800 block mx-auto mt-2"
-            >
-              Go Back
-            </button>
-          </>
-        )}
+        <p className="text-center text-gray-500 text-sm">Calculating your recommendation...</p>
       </div>
     </div>
   );
