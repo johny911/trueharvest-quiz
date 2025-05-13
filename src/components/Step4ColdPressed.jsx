@@ -7,21 +7,24 @@ export default function Step4ColdPressed({ formData, updateForm, nextStep, prevS
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-white p-6">
-      <div className="max-w-md w-full space-y-6 text-center">
-        <h1 className="text-2xl font-bold text-gray-800">Cold-Pressed Oils?</h1>
-        <p className="text-gray-600">Are you currently using cold-pressed oils in your household?</p>
+    <div className="w-full">
+      <div className="bg-white shadow-xl rounded-2xl p-6 space-y-6 text-center">
+        <h1 className="text-2xl font-semibold text-gray-800">Cold-Pressed Oils?</h1>
+        <p className="text-sm text-gray-500">
+          Are you currently using cold-pressed oils in your household?
+        </p>
 
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col gap-4">
           <button
             onClick={() => handleSelect(true)}
-            className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
           >
             Yes, we use cold-pressed oils
           </button>
+
           <button
             onClick={() => handleSelect(false)}
-            className="w-full bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300 transition"
+            className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 rounded-xl transition"
           >
             No, we don't use them yet
           </button>
@@ -29,7 +32,7 @@ export default function Step4ColdPressed({ formData, updateForm, nextStep, prevS
 
         <button
           onClick={prevStep}
-          className="mt-4 text-sm text-gray-600 underline hover:text-gray-800"
+          className="text-sm text-gray-500 underline hover:text-gray-800 mt-3"
         >
           Back
         </button>

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import clsx from 'clsx';
+import { motion } from 'framer-motion';
 
 const oilOptions = [
   'Refined Sunflower Oil',
@@ -11,7 +13,7 @@ const oilOptions = [
 
 export default function Step5CurrentOils({ formData, updateForm, nextStep, prevStep }) {
   const [selected, setSelected] = useState(formData.currentOils || []);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(false);
 
   const handleToggle = (oil) => {
     if (selected.includes(oil)) {
@@ -19,12 +21,12 @@ export default function Step5CurrentOils({ formData, updateForm, nextStep, prevS
     } else {
       setSelected([...selected, oil]);
     }
-    setError('');
+    setError(false);
   };
 
   const handleNext = () => {
     if (selected.length === 0) {
-      setError('Please select at least one oil');
+      setError(true);
       return;
     }
     updateForm({ currentOils: selected });
@@ -32,41 +34,56 @@ export default function Step5CurrentOils({ formData, updateForm, nextStep, prevS
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-white p-6">
-      <div className="max-w-md w-full space-y-6">
-        <h1 className="text-2xl font-bold text-gray-800 text-center">What oils do you use now?</h1>
-        <p className="text-center text-gray-600">Choose all that apply</p>
-
-        <div className="space-y-3">
-          {oilOptions.map((oil) => (
-            <label key={oil} className="block">
-              <input
-                type="checkbox"
-                checked={selected.includes(oil)}
-                onChange={() => handleToggle(oil)}
-                className="mr-2"
-              />
-              {oil}
-            </label>
-          ))}
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+    <div className="w-full">
+      <motion.div
+        animate={error ? { x: [-4, 4, -4, 4, 0] } : {}}
+        transition={{ duration: 0.3 }}
+        className="bg-white shadow-xl rounded-2xl p-6 space-y-6"
+      >
+        <div className="text-center space-y-1">
+          <h1 className="text-2xl font-semibold text-gray-800">What oils do you use now?</h1>
+          <p className="text-sm text-gray-500">Choose all that apply</p>
         </div>
 
-        <div className="flex justify-between space-x-4">
+        <div className="flex flex-wrap gap-2">
+          {oilOptions.map((oil) => (
+            <button
+              key={oil}
+              onClick={() => handleToggle(oil)}
+              type="button"
+              className={clsx(
+                'px-4 py-2 rounded-full text-sm border transition',
+                selected.includes(oil)
+                  ? 'bg-green-600 text-white border-green-600'
+                  : 'bg-gray-100 text-gray-800 border-gray-300 hover:bg-gray-200'
+              )}
+            >
+              {oil}
+            </button>
+          ))}
+        </div>
+
+        {error && (
+          <p className="text-sm text-red-500 mt-2 text-center">
+            Please select at least one option.
+          </p>
+        )}
+
+        <div className="flex justify-between gap-4 pt-4">
           <button
             onClick={prevStep}
-            className="w-1/2 bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300"
+            className="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl transition"
           >
             Back
           </button>
           <button
             onClick={handleNext}
-            className="w-1/2 bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700"
+            className="w-1/2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
           >
             Get Recommendation
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -97,35 +97,35 @@ export default function Step6Recommendation({ formData, prevStep }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full space-y-6 bg-white shadow-xl rounded-2xl p-6">
+    <div className="w-full">
+      <div className="bg-white shadow-xl rounded-2xl p-6 space-y-6">
         {loading ? (
           <p className="text-center text-gray-500 text-sm">Calculating your recommendation...</p>
         ) : (
           <>
-            <div className="text-center space-y-2">
+            <div className="text-center space-y-1">
               <h1 className="text-2xl font-semibold text-gray-800">Hi {formData.name} 👋</h1>
-              <p className="text-gray-600 text-sm">Based on your answers, here’s what we recommend for your family:</p>
+              <p className="text-sm text-gray-500">Based on your answers, here’s what we recommend:</p>
             </div>
 
             <div className="space-y-3">
               {summary.map((item, index) => (
                 <div
                   key={index}
-                  className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm"
+                  className="flex items-center bg-gray-100 rounded-xl p-3"
                 >
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-14 h-14 object-cover rounded-md border mr-3"
+                    className="w-14 h-14 object-cover rounded-lg border mr-3"
                   />
                   <div className="flex-1">
-                    <p className="text-gray-800 font-medium text-sm">{item.title}</p>
-                    <p className="text-gray-500 text-xs">₹{item.price.toFixed(2)} × {item.quantity}</p>
+                    <p className="text-sm font-medium text-gray-800">{item.title}</p>
+                    <p className="text-xs text-gray-500">₹{item.price.toFixed(2)} × {item.quantity}</p>
                   </div>
-                  <div className="text-right text-green-700 font-semibold text-sm">
+                  <p className="text-sm font-semibold text-green-700 text-right">
                     ₹{item.lineTotal.toFixed(2)}
-                  </div>
+                  </p>
                 </div>
               ))}
             </div>
@@ -139,18 +139,20 @@ export default function Step6Recommendation({ formData, prevStep }) {
               href={cartUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full block bg-green-600 hover:bg-green-700 text-white text-center font-semibold py-3 rounded-xl transition duration-200 shadow"
+              className="w-full block bg-green-600 hover:bg-green-700 text-white text-center font-semibold py-3 rounded-xl transition"
             >
               Buy Now
             </a>
 
             {submitted && (
-              <p className="text-center text-xs text-gray-400 mt-2">Your response has been saved.</p>
+              <p className="text-center text-xs text-gray-400 mt-2">
+                Your recommendation has been saved.
+              </p>
             )}
 
             <button
               onClick={prevStep}
-              className="block text-center w-full text-sm text-gray-500 underline mt-2 hover:text-gray-800"
+              className="text-sm text-gray-500 underline hover:text-gray-800 block mx-auto mt-2"
             >
               Go Back
             </button>
