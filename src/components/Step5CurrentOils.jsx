@@ -1,21 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import LoadingScreen from './LoadingScreen';
-
-const oilOptions = [
-  'Refined Sunflower Oil',
-  'Refined Groundnut Oil',
-  'Palm Oil',
-  'Olive Oil',
-  'Cold-Pressed Oil',
-  "I don't know"
-];
 
 export default function Step5CurrentOils({ formData, updateForm, nextStep, prevStep }) {
   const [selected, setSelected] = useState(formData.currentOils || []);
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Dynamically decide oil options based on Step 4
+  const oilOptions = useMemo(() => {
+    return formData.usesColdPressed
+      ? [
+          'Cold-Pressed Sesame Oil',
+          'Cold-Pressed Groundnut Oil',
+          'Cold-Pressed Mustard Oil',
+          'Cold-Pressed Coconut Oil',
+          'Cold-Pressed Sunflower Oil',
+        ]
+      : [
+          'Refined Sunflower Oil',
+          'Refined Groundnut Oil',
+          'Refined Sesame Oil',
+          'Palm Oil',
+          'Refined Coconut Oil',
+        ];
+  }, [formData.usesColdPressed]);
 
   const handleToggle = (oil) => {
     if (selected.includes(oil)) {
@@ -32,7 +42,7 @@ export default function Step5CurrentOils({ formData, updateForm, nextStep, prevS
       return;
     }
     updateForm({ currentOils: selected });
-    setIsLoading(true); // trigger loading screen
+    setIsLoading(true);
   };
 
   return (
@@ -41,7 +51,6 @@ export default function Step5CurrentOils({ formData, updateForm, nextStep, prevS
         <LoadingScreen onComplete={nextStep} />
       ) : (
         <>
-          {/* Clean black ← arrow */}
           <div className="mb-2">
             <span
               onClick={prevStep}
