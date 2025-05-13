@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import './index.css'; // ✅ Import Tailwind styles
+import './index.css';
 import Step1Name from './components/Step1Name';
 import Step2Phone from './components/Step2Phone';
 import Step3Household from './components/Step3Household';
 import Step4ColdPressed from './components/Step4ColdPressed';
 import Step5CurrentOils from './components/Step5CurrentOils';
 import Step6Recommendation from './components/Step6Recommendation';
+import ProgressBar from './components/ProgressBar'; // ✅ Add this line
 
 export default function App() {
   const [step, setStep] = useState(1);
@@ -29,6 +30,9 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
+        {/* ✅ Progress bar appears above all steps */}
+        <ProgressBar step={step} />
+
         {(() => {
           switch (step) {
             case 1: return <Step1Name {...props} />;
