@@ -18,14 +18,16 @@ export default function Step2Phone({ formData, updateForm, nextStep, prevStep })
   };
 
   return (
-    <div className="w-full relative">
-      {/* Floating ← icon outside the card */}
-      <button
-        onClick={prevStep}
-        className="absolute -top-4 left-2 text-gray-400 hover:text-gray-700 text-2xl"
-      >
-        ←
-      </button>
+    <div className="w-full">
+      {/* Minimal ← icon between progress and card */}
+      <div className="mb-2">
+        <button
+          onClick={prevStep}
+          className="text-gray-400 hover:text-gray-700 text-xl pl-1"
+        >
+          ←
+        </button>
+      </div>
 
       <motion.div
         animate={error ? { x: [-4, 4, -4, 4, 0] } : {}}
