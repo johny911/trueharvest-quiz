@@ -19,14 +19,14 @@ export default function Step2Phone({ formData, updateForm, nextStep, prevStep })
 
   return (
     <div className="w-full">
-      {/* Minimal ← icon between progress and card */}
+      {/* Plain ← arrow above card */}
       <div className="mb-2">
-        <button
+        <span
           onClick={prevStep}
-          className="text-gray-400 hover:text-gray-700 text-xl pl-1"
+          className="text-xl text-gray-400 hover:text-gray-700 cursor-pointer select-none"
         >
           ←
-        </button>
+        </span>
       </div>
 
       <motion.div
