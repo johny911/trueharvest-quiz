@@ -54,7 +54,7 @@ export default function Step1Name({ formData, updateForm, nextStep }) {
           >
             Next
           </button>
-          <p className="text-xs text-gray-400 text-center mt-2">
+          <p className="text-xs text-gray-400 mt-2 text-left">
             We ask, so we can personalize your experience!
           </p>
         </div>
