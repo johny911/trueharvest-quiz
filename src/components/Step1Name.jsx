@@ -23,8 +23,8 @@ export default function Step1Name({ formData, updateForm, nextStep }) {
         className="bg-white shadow-xl rounded-2xl p-6 space-y-6"
       >
         <div className="text-center space-y-1">
-          <h1 className="text-2xl font-semibold text-gray-800">Hey 👋</h1>
-          <p className="text-sm text-gray-500">What’s your name?</p>
+          <h1 className="text-2xl font-semibold text-gray-800">First, what’s your name?</h1>
+          <p className="text-sm text-gray-500">We ask, so we can personalize your experience!</p>
         </div>
 
         <div>
@@ -37,7 +37,7 @@ export default function Step1Name({ formData, updateForm, nextStep }) {
             }}
             placeholder="Enter your name"
             className={clsx(
-              'w-full px-4 py-3 rounded-xl border text-sm outline-none transition-all',
+              'w-full px-4 py-3 text-[16px] rounded-xl border outline-none transition-all',
               error
                 ? 'border-red-500 ring-1 ring-red-400'
                 : 'border-gray-300 focus:ring-2 focus:ring-green-500'
