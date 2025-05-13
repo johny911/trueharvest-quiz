@@ -26,7 +26,7 @@ export default function FinalReport({ formData, summary, totalPrice, cartUrl }) 
       <div className="w-full max-w-2xl space-y-6 bg-white rounded-2xl shadow-xl p-6">
         {/* Greeting */}
         <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-bold text-gray-800">Hi {formData.name},</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Hi {formData?.name},</h1>
           <p className="text-sm text-gray-600">Based on your answers, here’s your personalized oil recommendation.</p>
         </div>
 
