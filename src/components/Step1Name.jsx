@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 
-export default function Step1Name({ formData, updateForm, nextStep }) {
+export default function Step1Name({ formData, updateForm, nextStep, prevStep }) {
   const [name, setName] = useState(formData.name || '');
   const [error, setError] = useState(false);
 
@@ -20,9 +20,17 @@ export default function Step1Name({ formData, updateForm, nextStep }) {
       <motion.div
         animate={error ? { x: [-4, 4, -4, 4, 0] } : {}}
         transition={{ duration: 0.3 }}
-        className="bg-white shadow-xl rounded-2xl p-6 space-y-6"
+        className="relative bg-white shadow-xl rounded-2xl p-6 space-y-6"
       >
-        <div className="text-center space-y-1">
+        {/* ← Back icon in top-left */}
+        <button
+          onClick={prevStep}
+          className="absolute top-4 left-4 text-gray-500 hover:text-gray-800 text-xl"
+        >
+          ←
+        </button>
+
+        <div className="text-center space-y-1 mt-2">
           <h1 className="text-2xl font-semibold text-gray-800">First, what’s your name?</h1>
         </div>
 

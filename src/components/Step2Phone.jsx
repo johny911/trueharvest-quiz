@@ -22,9 +22,17 @@ export default function Step2Phone({ formData, updateForm, nextStep, prevStep })
       <motion.div
         animate={error ? { x: [-4, 4, -4, 4, 0] } : {}}
         transition={{ duration: 0.3 }}
-        className="bg-white shadow-xl rounded-2xl p-6 space-y-6"
+        className="relative bg-white shadow-xl rounded-2xl p-6 space-y-6"
       >
-        <div className="text-center space-y-1">
+        {/* ← Back icon in top-left */}
+        <button
+          onClick={prevStep}
+          className="absolute top-4 left-4 text-gray-500 hover:text-gray-800 text-xl"
+        >
+          ←
+        </button>
+
+        <div className="text-center space-y-1 mt-2">
           <h1 className="text-2xl font-semibold text-gray-800">
             Thanks, {formData.name || 'there'}!<br />Could you share your phone number?
           </h1>
@@ -54,22 +62,14 @@ export default function Step2Phone({ formData, updateForm, nextStep, prevStep })
           )}
         </div>
 
-        <div className="flex justify-between gap-4 pt-2">
+        <div className="pt-2">
           <button
-            onClick={prevStep}
-            className="w-1/2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl transition"
+            onClick={handleNext}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
           >
-            Back
+            Next
           </button>
-          <div className="w-1/2">
-            <button
-              onClick={handleNext}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition"
-            >
-              Next
-            </button>
-            <p className="text-xs text-gray-400 text-center mt-2">We won’t spam you.</p>
-          </div>
+          <p className="text-xs text-gray-400 text-left mt-2">We won’t spam you.</p>
         </div>
       </motion.div>
     </div>
