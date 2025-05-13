@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { CheckCircle } from 'lucide-react';
 
 const messages = [
   'Analyzing your responses…',
@@ -19,9 +18,9 @@ export default function LoadingScreen({ onComplete }) {
         setCurrentStep((prev) => prev + 1);
       } else {
         clearInterval(interval);
-        setTimeout(onComplete, 1000); // short pause before continuing
+        setTimeout(onComplete, 1000);
       }
-    }, 2300); // ~2.3 seconds per step for ~7s total
+    }, 2300);
 
     return () => clearInterval(interval);
   }, [currentStep, onComplete]);
@@ -36,7 +35,15 @@ export default function LoadingScreen({ onComplete }) {
             className="flex items-center justify-center gap-2 text-sm"
           >
             {completedSteps.includes(index) ? (
-              <CheckCircle size={18} className="text-green-600" />
+              <svg
+                className="w-4 h-4 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
             ) : index === currentStep ? (
               <div className="w-4 h-4 rounded-full border-2 border-gray-300 border-t-green-600 animate-spin" />
             ) : (
