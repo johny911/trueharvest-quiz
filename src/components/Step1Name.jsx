@@ -24,7 +24,6 @@ export default function Step1Name({ formData, updateForm, nextStep }) {
       >
         <div className="text-center space-y-1">
           <h1 className="text-2xl font-semibold text-gray-800">First, what’s your name?</h1>
-          <p className="text-sm text-gray-500">We ask, so we can personalize your experience!</p>
         </div>
 
         <div>
@@ -48,12 +47,17 @@ export default function Step1Name({ formData, updateForm, nextStep }) {
           )}
         </div>
 
-        <button
-          onClick={handleNext}
-          className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition duration-200"
-        >
-          Next
-        </button>
+        <div>
+          <button
+            onClick={handleNext}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition duration-200"
+          >
+            Next
+          </button>
+          <p className="text-xs text-gray-400 text-center mt-2">
+            We ask, so we can personalize your experience!
+          </p>
+        </div>
       </motion.div>
     </div>
   );
