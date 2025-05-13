@@ -18,21 +18,21 @@ export default function Step2Phone({ formData, updateForm, nextStep, prevStep })
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
+      {/* Floating ← icon outside the card */}
+      <button
+        onClick={prevStep}
+        className="absolute -top-4 left-2 text-gray-400 hover:text-gray-700 text-2xl"
+      >
+        ←
+      </button>
+
       <motion.div
         animate={error ? { x: [-4, 4, -4, 4, 0] } : {}}
         transition={{ duration: 0.3 }}
-        className="relative bg-white shadow-xl rounded-2xl p-6 space-y-6"
+        className="bg-white shadow-xl rounded-2xl p-6 space-y-6"
       >
-        {/* ← Back icon in top-left */}
-        <button
-          onClick={prevStep}
-          className="absolute top-4 left-4 text-gray-500 hover:text-gray-800 text-xl"
-        >
-          ←
-        </button>
-
-        <div className="text-center space-y-1 mt-2">
+        <div className="text-center space-y-1">
           <h1 className="text-2xl font-semibold text-gray-800">
             Thanks, {formData.name || 'there'}!<br />Could you share your phone number?
           </h1>
