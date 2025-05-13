@@ -8,7 +8,6 @@ export default function Step5CurrentOils({ formData, updateForm, nextStep, prevS
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Dynamically decide oil options based on Step 4
   const oilOptions = useMemo(() => {
     return formData.usesColdPressed
       ? [
@@ -44,6 +43,10 @@ export default function Step5CurrentOils({ formData, updateForm, nextStep, prevS
     updateForm({ currentOils: selected });
     setIsLoading(true);
   };
+
+  const subtext = formData.usesColdPressed
+    ? 'There’s cold-pressed. And then there’s truly cold-pressed.'
+    : 'It’s not cooking oil. It’s a chemistry experiment.';
 
   return (
     <div className="w-full">
@@ -101,6 +104,7 @@ export default function Step5CurrentOils({ formData, updateForm, nextStep, prevS
               >
                 Get Recommendation
               </button>
+              <p className="text-xs text-gray-400 text-center mt-2">{subtext}</p>
             </div>
           </motion.div>
         </>
