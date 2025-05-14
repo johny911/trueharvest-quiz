@@ -17,7 +17,7 @@ export default function HamburgerMenu({ isOpen, onClose }) {
       {/* drawer slides in from left, under a 3.5rem-tall header */}
       <div
         className={`
-          fixed top-14 left-0 bottom-0 w-64 bg-white shadow-lg
+          fixed top-14 left-0 bottom-0 w-full bg-white shadow-lg
           transition-transform duration-300 z-40 flex flex-col
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
