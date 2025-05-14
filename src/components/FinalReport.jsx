@@ -93,8 +93,6 @@ export default function FinalReport({ formData, summary, totalPrice, cartUrl }) 
         {/* Buy Now */}
         <a
           href={fastrrUrl}
-          target="_blank"
-          rel="noopener noreferrer"
           className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition"
         >
           Buy Now
