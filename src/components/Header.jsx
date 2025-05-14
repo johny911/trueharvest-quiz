@@ -6,7 +6,10 @@ export default function Header({ cartCount = 0 }) {
     <header className="relative w-full bg-white border-b border-gray-200">
       <div className="max-w-screen-xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Hamburger (left) */}
-        <button aria-label="Menu" className="p-2 text-gray-800 hover:text-gray-600">
+        <button
+          aria-label="Menu"
+          className="p-2 bg-transparent border-none rounded-none text-gray-800 hover:text-gray-600"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -31,7 +34,10 @@ export default function Header({ cartCount = 0 }) {
 
         {/* Search & Cart (right) */}
         <div className="flex items-center space-x-4">
-          <button aria-label="Search" className="p-2 text-gray-800 hover:text-gray-600">
+          <button
+            aria-label="Search"
+            className="p-2 bg-transparent border-none rounded-none text-gray-800 hover:text-gray-600"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 400 400"
@@ -48,7 +54,10 @@ export default function Header({ cartCount = 0 }) {
             </svg>
           </button>
 
-          <button aria-label="Cart" className="relative p-2 text-gray-800 hover:text-gray-600">
+          <button
+            aria-label="Cart"
+            className="relative p-2 bg-transparent border-none rounded-none text-gray-800 hover:text-gray-600"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 400 400"
