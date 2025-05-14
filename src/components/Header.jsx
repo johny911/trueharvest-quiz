@@ -15,20 +15,15 @@ export default function Header({ cartCount = 0 }) {
           {/* Hamburger / Close (left) */}
           <button
             aria-label={menuOpen ? 'Close menu' : 'Menu'}
-            className="p-2 bg-transparent border-none rounded-none text-gray-800 hover:text-gray-600"
-            onClick={() => setMenuOpen((open) => !open)}
+            className="p-2 bg-transparent border-none text-gray-800 hover:text-gray-600"
+            onClick={() => setMenuOpen(open => !open)}
           >
             {menuOpen ? (
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" className="w-6 h-6" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                className="w-6 h-6"
-                viewBox="0 0 18 16"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" className="w-6 h-6" viewBox="0 0 18 16">
                 <path
                   fill="currentColor"
                   d="M1 .5a.5.5 0 1 0 0 1h15.71a.5.5 0 0 0 0-1zM.5 8a.5.5 0 0 1 .5-.5h15.71a.5.5 0 0 1 0 1H1A.5.5 0 0 1 .5 8m0 7a.5.5 0 0 1 .5-.5h15.71a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5"
@@ -53,13 +48,9 @@ export default function Header({ cartCount = 0 }) {
           <div className="flex items-center space-x-4">
             <button
               aria-label="Search"
-              className="p-2 bg-transparent border-none rounded-none text-gray-800 hover:text-gray-600"
+              className="p-2 bg-transparent border-none text-gray-800 hover:text-gray-600"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 400 400"
-                className="w-6 h-6"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" className="w-6 h-6">
                 <g transform="matrix(1.3333,0,0,-1.3333,0,400)">
                   <g transform="scale(0.1)">
                     <path
@@ -71,15 +62,12 @@ export default function Header({ cartCount = 0 }) {
               </svg>
             </button>
 
-            <button
+            <a
+              href="https://trueharvest.store/cart"
               aria-label="Cart"
-              className="relative p-2 bg-transparent border-none rounded-none text-gray-800 hover:text-gray-600"
+              className="relative p-2 bg-transparent border-none text-gray-800 hover:text-gray-600"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 400 400"
-                className="w-6 h-6"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" className="w-6 h-6">
                 <g transform="matrix(1.3333,0,0,-1.3333,0,400)">
                   <g transform="scale(0.1)">
                     <path
@@ -102,7 +90,7 @@ export default function Header({ cartCount = 0 }) {
                   {cartCount}
                 </span>
               )}
-            </button>
+            </a>
           </div>
         </div>
       </header>
