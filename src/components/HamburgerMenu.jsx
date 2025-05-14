@@ -11,12 +11,12 @@ export default function HamburgerMenu({ isOpen, onClose }) {
         onClick={onClose}
       />
 
-      {/* drawer slides in from right, under the header */}
+      {/* drawer slides in from left */}
       <div
-        className={`fixed top-14 right-0 bottom-0 w-64 bg-white shadow-lg transition-transform duration-300 z-40
-          ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed top-14 left-0 bottom-0 w-64 bg-white shadow-lg transition-transform duration-300 z-40
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
-        {/* close button */}
+        {/* close button & logo */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
           <button onClick={onClose} aria-label="Close menu" className="text-2xl text-gray-700">
             ×
@@ -61,12 +61,9 @@ export default function HamburgerMenu({ isOpen, onClose }) {
           </ul>
         </nav>
 
-        {/* footer login */}
+        {/* footer/login */}
         <div className="mt-auto px-4 py-6">
-          <a
-            href="/account/login"
-            className="block text-center bg-green-600 text-white py-3 rounded-lg font-medium"
-          >
+          <a href="/account/login" className="block text-center bg-green-600 text-white py-3 rounded-lg font-medium">
             Login
           </a>
         </div>
