@@ -85,20 +85,23 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
 
         {/* Recommended Oils */}
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-gray-800">Your Oil Plan for the Next 30 Days</h2>
+          <h2 className="text-base font-semibold text-gray-800">Your Oil Plan for the Next 30 Days</h2>
           {summary.map((item, index) => (
             <div
               key={index}
-              className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm"
+              className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm relative"
             >
               <img
-                src={item.image || `https://trueharvest.store/products/${item.handle}.jpg`}
+                src={item.image}
                 alt={item.title}
                 className="w-14 h-14 object-cover rounded-md border mr-3"
               />
               <div className="flex-1">
-                <p className="text-gray-800 font-medium text-sm">{item.title}</p>
+                <p className="text-gray-800 font-medium text-sm mb-1">{item.title}</p>
                 <p className="text-gray-500 text-xs">₹{item.price.toFixed(2)} × {item.quantity}</p>
+                <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
+                  GMO Free
+                </div>
               </div>
               <div className="flex flex-col items-end">
                 <div className="flex items-center gap-2">
