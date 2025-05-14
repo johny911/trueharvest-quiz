@@ -7,8 +7,9 @@ import Step4ColdPressed from './components/Step4ColdPressed';
 import Step5CurrentOils from './components/Step5CurrentOils';
 import Step6Recommendation from './components/Step6Recommendation';
 import ProgressBar from './components/ProgressBar';
+import Header from './components/Header'; // ✅ Import Header
 
-import { AnimatePresence, motion } from 'framer-motion'; // ✅ Import animation
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function App() {
   const [step, setStep] = useState(1);
@@ -23,9 +24,7 @@ export default function App() {
 
   const nextStep = () => setStep((s) => s + 1);
   const prevStep = () => setStep((s) => s - 1);
-
-  const updateForm = (updates) =>
-    setFormData((prev) => ({ ...prev, ...updates }));
+  const updateForm = (updates) => setFormData((prev) => ({ ...prev, ...updates }));
 
   const props = { formData, updateForm, nextStep, prevStep };
 
@@ -42,8 +41,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start px-4 pt-4">
       <div className="w-full max-w-md">
+        <Header /> {/* ✅ Shopify-style header */}
         <ProgressBar step={step} />
 
         <AnimatePresence mode="wait">
