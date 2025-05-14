@@ -1,7 +1,7 @@
 // src/components/Header.jsx
 import React from 'react';
 import { Menu, Search, ShoppingCart } from 'lucide-react';
-import logo from '/logo.svg'; // Ensure logo.svg is placed in /public or /src/assets
+import logo from '/logo.png'; // Ensure logo.svg is placed in /public or /src/assets
 
 export default function Header() {
   return (
