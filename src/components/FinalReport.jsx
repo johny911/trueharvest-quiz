@@ -109,14 +109,14 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => updateQuantity(index, -1)}
-                    className="w-6 h-6 bg-gray-300 rounded-full text-sm text-black"
+                    className="w-7 h-7 border border-gray-300 rounded-md text-gray-700 text-base flex items-center justify-center hover:border-gray-400"
                   >
                     −
                   </button>
                   <span className="text-sm font-medium">{item.quantity}</span>
                   <button
                     onClick={() => updateQuantity(index, 1)}
-                    className="w-6 h-6 bg-gray-300 rounded-full text-sm text-black"
+                    className="w-7 h-7 border border-gray-300 rounded-md text-gray-700 text-base flex items-center justify-center hover:border-gray-400"
                   >
                     +
                   </button>
