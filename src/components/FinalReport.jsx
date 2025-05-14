@@ -8,17 +8,17 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
 
   const warnings = {
     inflammation: {
-      icon: '🧠',
+      icon: '/icons/inflammation.svg',
       title: 'Inflammation',
       description: 'Refined oils are high in omega-6 fatty acids which can trigger chronic inflammation in the body.'
     },
     heart: {
-      icon: '❤️',
+      icon: '/icons/heart.svg',
       title: 'Heart Disease',
       description: 'Chemically extracted oils may damage blood vessels and raise bad cholesterol.'
     },
     insulin: {
-      icon: '🍩',
+      icon: '/icons/insulin.svg',
       title: 'Insulin Resistance & Diabetes',
       description: 'Refined oils impair insulin sensitivity and increase the risk of developing diabetes.'
     }
@@ -65,21 +65,21 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
 
         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
           <h2 className="text-base font-semibold text-red-700 mb-3">The refined oil you’re using could be causing:</h2>
-          <div className="flex justify-around gap-2">
+          <div className="flex gap-3">
             {Object.keys(warnings).map((key) => (
               <button
                 key={key}
                 onClick={() => setActiveTab(key)}
-                className={`flex flex-col items-center text-sm p-2 rounded-xl transition ${
-                  activeTab === key ? 'bg-red-100 text-red-700' : 'text-red-500 hover:bg-red-50'
+                className={`flex flex-col items-center w-1/3 rounded-xl border p-3 transition ${
+                  activeTab === key ? 'bg-red-100 border-red-300' : 'bg-white border-gray-200 hover:border-red-400'
                 }`}
               >
-                <div className="text-3xl">{warnings[key].icon}</div>
-                <span>{warnings[key].title}</span>
+                <img src={warnings[key].icon} alt={key} className="h-8 mb-2" />
+                <span className="text-xs font-medium text-center text-red-700">{warnings[key].title}</span>
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-600 mt-3">{warnings[activeTab].description}</p>
+          <p className="text-xs text-gray-600 mt-3 text-center">{warnings[activeTab].description}</p>
         </div>
 
         <div className="space-y-3">
