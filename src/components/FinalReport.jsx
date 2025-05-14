@@ -26,22 +26,16 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
 
   const buildFastrrUrl = (items) => {
     const base = 'https://trueharvest.store/';
-    const productParam = items
-      .map((item) => `${item.id}:${item.quantity}`)
-      .join(',');
+    const productParam = items.map((item) => `${item.id}:${item.quantity}`).join(',');
     return `${base}?isFastrrProduct=true&fastrr_link_type=CHECKOUT_LINK&seller-domain=trueharvest.store&products=${encodeURIComponent(productParam)}`;
   };
 
   const updateQuantity = async (index, delta) => {
     const newSummary = [...summary];
     newSummary[index].quantity += delta;
-
-    if (newSummary[index].quantity < 1) {
-      newSummary.splice(index, 1);
-    }
+    if (newSummary[index].quantity < 1) newSummary.splice(index, 1);
 
     const newTotal = newSummary.reduce((acc, item) => acc + item.quantity * item.price, 0);
-
     setSummary(newSummary);
     setTotalPrice(newTotal);
 
@@ -51,6 +45,14 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
         recommended_oils: newSummary.map(item => `${item.title} - ${item.quantity}L`)
       })
       .eq('phone', formData.phone);
+  };
+
+  const getBadgeText = (title) => {
+    const lower = title.toLowerCase();
+    if (lower.includes('sesame')) return 'Molasses Free';
+    if (lower.includes('coconut')) return 'Sulfur Free Copra';
+    if (lower.includes('groundnut')) return 'Heirloom Groundnut';
+    return 'GMO Free';
   };
 
   const fastrrUrl = buildFastrrUrl(summary);
@@ -63,7 +65,7 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
           <p className="text-sm text-gray-600">Based on your answers, here’s your personalized oil recommendation.</p>
         </div>
 
-        {/* Warnings Section with Friendly Visuals */}
+        {/* Warnings */}
         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
           <h2 className="text-base font-semibold text-red-700 mb-3">The refined oil you’re using could be causing:</h2>
           <div className="flex justify-between gap-2 mb-3">
@@ -83,7 +85,7 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
           <p className="text-xs text-gray-600 text-center">{warnings[activeTab].description}</p>
         </div>
 
-        {/* Recommended Oils */}
+        {/* Recommendations */}
         <div className="space-y-3">
           <h2 className="text-base font-semibold text-gray-800">Your Oil Plan for the Next 30 Days</h2>
           {summary.map((item, index) => (
@@ -100,7 +102,7 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
                 <p className="text-gray-800 font-medium text-sm mb-1">{item.title}</p>
                 <p className="text-gray-500 text-xs">₹{item.price.toFixed(2)} × {item.quantity}</p>
                 <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
-                  GMO Free
+                  {getBadgeText(item.title)}
                 </div>
               </div>
               <div className="flex flex-col items-end">
@@ -132,7 +134,6 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
           </div>
         </div>
 
-        {/* Buy Now CTA */}
         <a
           href={fastrrUrl}
           className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition"
