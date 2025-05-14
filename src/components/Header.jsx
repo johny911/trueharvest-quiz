@@ -12,23 +12,29 @@ export default function Header({ cartCount = 0 }) {
 
       <header className="relative w-full bg-white border-b border-gray-200">
         <div className="max-w-screen-xl mx-auto px-4 py-3 flex items-center justify-between">
-          {/* Hamburger (left) */}
+          {/* Hamburger / Close (left) */}
           <button
-            aria-label="Menu"
+            aria-label={menuOpen ? 'Close menu' : 'Menu'}
             className="p-2 bg-transparent border-none rounded-none text-gray-800 hover:text-gray-600"
-            onClick={() => setMenuOpen(true)}
+            onClick={() => setMenuOpen((open) => !open)}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              className="w-6 h-6"
-              viewBox="0 0 18 16"
-            >
-              <path
-                fill="currentColor"
-                d="M1 .5a.5.5 0 1 0 0 1h15.71a.5.5 0 0 0 0-1zM.5 8a.5.5 0 0 1 .5-.5h15.71a.5.5 0 0 1 0 1H1A.5.5 0 0 1 .5 8m0 7a.5.5 0 0 1 .5-.5h15.71a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5"
-              />
-            </svg>
+            {menuOpen ? (
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" className="w-6 h-6" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                className="w-6 h-6"
+                viewBox="0 0 18 16"
+              >
+                <path
+                  fill="currentColor"
+                  d="M1 .5a.5.5 0 1 0 0 1h15.71a.5.5 0 0 0 0-1zM.5 8a.5.5 0 0 1 .5-.5h15.71a.5.5 0 0 1 0 1H1A.5.5 0 0 1 .5 8m0 7a.5.5 0 0 1 .5-.5h15.71a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5"
+                />
+              </svg>
+            )}
           </button>
 
           {/* Logo—absolutely centered with link */}
