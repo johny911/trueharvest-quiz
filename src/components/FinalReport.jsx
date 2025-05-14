@@ -21,6 +21,17 @@ export default function FinalReport({ formData, summary, totalPrice, cartUrl }) 
     }
   };
 
+  const buildFastrrUrl = (items) => {
+    const base = 'https://trueharvest.store/';
+    const productParam = items
+      .map((item) => `${item.id}:${item.quantity}`)
+      .join(',');
+
+    return `${base}?isFastrrProduct=true&fastrr_link_type=CHECKOUT_LINK&seller-domain=trueharvest.store&products=${encodeURIComponent(productParam)}`;
+  };
+
+  const fastrrUrl = buildFastrrUrl(summary);
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-2xl space-y-6 bg-white rounded-2xl shadow-xl p-6">
@@ -81,7 +92,7 @@ export default function FinalReport({ formData, summary, totalPrice, cartUrl }) 
 
         {/* Buy Now */}
         <a
-          href={cartUrl}
+          href={fastrrUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition"
