@@ -45,10 +45,15 @@ export default function Step6Recommendation({ formData, prevStep }) {
         const lineTotal = qty * price;
         total += lineTotal;
 
+        const image =
+          (variant.featured_image && variant.featured_image.src) ||
+          data.images?.[0]?.src ||
+          '';
+
         return {
           id: variantId,
           title: variant.name,
-          image: variant.featured_image?.url || data.images[0]?.src || '',
+          image,
           quantity: qty,
           price,
           lineTotal,
