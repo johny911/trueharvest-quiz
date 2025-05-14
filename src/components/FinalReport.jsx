@@ -8,17 +8,17 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
 
   const warnings = {
     inflammation: {
-      icon: '/icons/inflammation.svg',
+      image: '/images/inflammation.png',
       title: 'Inflammation',
       description: 'Refined oils are high in omega-6 fatty acids which can trigger chronic inflammation in the body.'
     },
     heart: {
-      icon: '/icons/heart.svg',
+      image: '/images/heart.png',
       title: 'Heart Disease',
       description: 'Chemically extracted oils may damage blood vessels and raise bad cholesterol.'
     },
     insulin: {
-      icon: '/icons/insulin.svg',
+      image: '/images/insulin.png',
       title: 'Insulin Resistance & Diabetes',
       description: 'Refined oils impair insulin sensitivity and increase the risk of developing diabetes.'
     }
@@ -63,25 +63,27 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
           <p className="text-sm text-gray-600">Based on your answers, here’s your personalized oil recommendation.</p>
         </div>
 
+        {/* Warnings Section with Friendly Visuals */}
         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
           <h2 className="text-base font-semibold text-red-700 mb-3">The refined oil you’re using could be causing:</h2>
-          <div className="flex gap-3">
+          <div className="flex justify-between gap-2 mb-3">
             {Object.keys(warnings).map((key) => (
               <button
                 key={key}
                 onClick={() => setActiveTab(key)}
-                className={`flex flex-col items-center w-1/3 rounded-xl border p-3 transition ${
+                className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
                   activeTab === key ? 'bg-red-100 border-red-300' : 'bg-white border-gray-200 hover:border-red-400'
                 }`}
               >
-                <img src={warnings[key].icon} alt={key} className="h-8 mb-2" />
-                <span className="text-xs font-medium text-center text-red-700">{warnings[key].title}</span>
+                <img src={warnings[key].image} alt={key} className="h-16 mb-2 object-contain" />
+                <span className="text-xs font-medium text-red-700 text-center">{warnings[key].title}</span>
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-600 mt-3 text-center">{warnings[activeTab].description}</p>
+          <p className="text-xs text-gray-600 text-center">{warnings[activeTab].description}</p>
         </div>
 
+        {/* Recommended Oils */}
         <div className="space-y-3">
           <h2 className="text-base font-semibold text-gray-800">Your Recommended Combo</h2>
           {summary.map((item, index) => (
@@ -127,6 +129,7 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
           </div>
         </div>
 
+        {/* Buy Now CTA */}
         <a
           href={fastrrUrl}
           className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition"
