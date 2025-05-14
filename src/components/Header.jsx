@@ -3,9 +3,9 @@ import React from 'react';
 
 export default function Header({ cartCount = 0 }) {
   return (
-    <header className="w-full bg-white border-b border-gray-200">
-      <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-3">
-        {/* Hamburger */}
+    <header className="relative w-full bg-white border-b border-gray-200">
+      <div className="max-w-screen-xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Hamburger (left) */}
         <button aria-label="Menu" className="p-2 text-gray-800 hover:text-gray-600">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -20,12 +20,16 @@ export default function Header({ cartCount = 0 }) {
           </svg>
         </button>
 
-        {/* Logo */}
-        <div className="flex-shrink-0 mx-auto">
-          <img src="/images/logo.png" alt="True Harvest" className="h-8 object-contain" />
+        {/* Logo—absolutely centered */}
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <img
+            src="/images/logo.png"
+            alt="True Harvest"
+            className="h-8 object-contain"
+          />
         </div>
 
-        {/* Search & Cart */}
+        {/* Search & Cart (right) */}
         <div className="flex items-center space-x-4">
           <button aria-label="Search" className="p-2 text-gray-800 hover:text-gray-600">
             <svg
