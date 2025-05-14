@@ -6,9 +6,12 @@ export default function Header({ cartCount = 0 }) {
     <header className="w-full bg-white border-b border-gray-200">
       <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-3">
         {/* Hamburger */}
-        <button aria-label="Menu" className="p-0">
+        <button
+          aria-label="Menu"
+          className="p-0 bg-transparent border-none focus:ring-0"
+        >
           <svg
-            className="w-8 h-8 text-gray-800"
+            className="w-8 h-8 text-black"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -27,15 +30,18 @@ export default function Header({ cartCount = 0 }) {
           <img
             src="/images/logo.png"
             alt="True Harvest"
-            className="h-8 object-contain"
+            className="h-8 object-contain mx-auto"
           />
         </div>
 
         {/* Search & Cart */}
         <div className="flex items-center space-x-4">
-          <button aria-label="Search" className="p-0">
+          <button
+            aria-label="Search"
+            className="p-0 bg-transparent border-none focus:ring-0"
+          >
             <svg
-              className="w-8 h-8 text-gray-800"
+              className="w-8 h-8 text-black"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -57,9 +63,12 @@ export default function Header({ cartCount = 0 }) {
             </svg>
           </button>
 
-          <button aria-label="Cart" className="relative p-0">
+          <button
+            aria-label="Cart"
+            className="relative p-0 bg-transparent border-none focus:ring-0"
+          >
             <svg
-              className="w-8 h-8 text-gray-800"
+              className="w-8 h-8 text-black"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -80,5 +89,5 @@ export default function Header({ cartCount = 0 }) {
         </div>
       </div>
     </header>
-);
+  );
 }
