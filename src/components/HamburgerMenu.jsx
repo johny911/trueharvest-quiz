@@ -27,7 +27,7 @@ export default function HamburgerMenu({ isOpen, onClose }) {
           <ul className="divide-y divide-gray-200">
             <li className="py-4 px-4">
               <a
-                href="/collections/all"
+                href="https://trueharvest.store"
                 className="flex items-center text-lg text-gray-800 hover:text-green-600"
               >
                 <img
@@ -40,7 +40,7 @@ export default function HamburgerMenu({ isOpen, onClose }) {
             </li>
             <li className="py-4 px-4">
               <a
-                href="/collections/stone-pressed-oils"
+                href="https://trueharvest.store/collections/wood-pressed-oils"
                 className="flex items-center text-lg text-gray-800 hover:text-green-600"
               >
                 <img
@@ -53,7 +53,7 @@ export default function HamburgerMenu({ isOpen, onClose }) {
             </li>
             <li className="py-4 px-4">
               <a
-                href="/blogs"
+                href="https://trueharvest.store/pages/contact"
                 className="flex items-center text-lg text-gray-800 hover:text-green-600"
               >
                 <img
@@ -66,7 +66,7 @@ export default function HamburgerMenu({ isOpen, onClose }) {
             </li>
             <li className="py-4 px-4">
               <a
-                href="/pages/about-us"
+                href="https://trueharvest.store/pages/about-us"
                 className="flex items-center text-lg text-gray-800 hover:text-green-600"
               >
                 <img
@@ -79,7 +79,7 @@ export default function HamburgerMenu({ isOpen, onClose }) {
             </li>
             <li className="py-4 px-4">
               <a
-                href="/pages/contact-us"
+                href="https://trueharvest.store/pages/contact"
                 className="flex items-center text-lg text-gray-800 hover:text-green-600"
               >
                 <img
@@ -96,7 +96,7 @@ export default function HamburgerMenu({ isOpen, onClose }) {
         {/* footer login, always at bottom */}
         <div className="px-4 pb-6 pt-4">
           <a
-            href="/account/login"
+            href="#"
             className="block w-full text-center bg-green-600 text-white py-3 rounded-lg font-medium"
           >
             Login
