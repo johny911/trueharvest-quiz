@@ -21,10 +21,33 @@ export default function Step6Recommendation({ formData, prevStep }) {
   const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
-    const recs = recommendOils(formData);
-    setRecommendations(recs);
-    fetchPricesAndBuildSummary(recs);
-    submitToSupabase(recs);
+    const preloadImages = () => {
+      const imgList = [
+        '/images/inflammation.png',
+        '/images/heart.png',
+        '/images/insulin.png',
+      ];
+      imgList.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+      });
+    };
+
+    const runRecommendation = async () => {
+      preloadImages(); // preload illustrations
+
+      const recs = recommendOils(formData);
+      setRecommendations(recs);
+      await fetchPricesAndBuildSummary(recs);
+      await submitToSupabase(recs);
+
+      // Add artificial delay to allow images to preload
+      await new Promise((resolve) => setTimeout(resolve, 6000));
+
+      setLoading(false);
+    };
+
+    runRecommendation();
   }, []);
 
   const fetchPricesAndBuildSummary = async (recs) => {
@@ -46,9 +69,9 @@ export default function Step6Recommendation({ formData, prevStep }) {
         total += lineTotal;
 
         const image =
-          (variant.featured_image && variant.featured_image.src) ||
+          variant?.featured_image?.src ||
           data.images?.[0]?.src ||
-          '';
+          `https://trueharvest.store/products/${handle}.jpg`;
 
         return {
           id: variantId,
@@ -65,7 +88,6 @@ export default function Step6Recommendation({ formData, prevStep }) {
     setTotalPrice(total);
     const cartLink = buildCartUrl(items);
     setCartUrl(cartLink);
-    setLoading(false);
   };
 
   const getVariantId = (name, volume) => {
@@ -80,7 +102,10 @@ export default function Step6Recommendation({ formData, prevStep }) {
         return id;
       }
     }
-    return Object.keys(variantInfo).find(id => variantInfo[id].handle.includes(lower.replace(' oil', '').replace(/\s/g, '-')) && id.includes(volumeText === '1l' ? '6' : '16'));
+    return Object.keys(variantInfo).find(id =>
+      variantInfo[id].handle.includes(lower.replace(' oil', '').replace(/\s/g, '-')) &&
+      id.includes(volumeText === '1l' ? '6' : '16')
+    );
   };
 
   const buildCartUrl = (items) => {
@@ -109,6 +134,7 @@ export default function Step6Recommendation({ formData, prevStep }) {
         summary={summary}
         totalPrice={totalPrice}
         cartUrl={cartUrl}
+        formData={formData}
       />
     );
   }
