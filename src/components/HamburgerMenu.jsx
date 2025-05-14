@@ -16,15 +16,6 @@ export default function HamburgerMenu({ isOpen, onClose }) {
         className={`fixed top-14 left-0 bottom-0 w-64 bg-white shadow-lg transition-transform duration-300 z-40
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
-        {/* close button & logo */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-          <button onClick={onClose} aria-label="Close menu" className="text-2xl text-gray-700">
-            ×
-          </button>
-          <img src="/images/logo.png" alt="True Harvest" className="h-8 object-contain" />
-          <div className="w-6" />
-        </div>
-
         {/* nav links */}
         <nav className="mt-6 px-4">
           <ul className="space-y-4">
@@ -49,21 +40,24 @@ export default function HamburgerMenu({ isOpen, onClose }) {
             <li>
               <a href="/pages/about-us" className="flex items-center text-lg text-gray-800 hover:text-green-600">
                 <img src="/icons/about-us.svg" alt="" className="h-6 w-6 mr-3" />
-                About us
+                About Us
               </a>
             </li>
             <li>
               <a href="/pages/contact-us" className="flex items-center text-lg text-gray-800 hover:text-green-600">
                 <img src="/icons/contact-us.svg" alt="" className="h-6 w-6 mr-3" />
-                Contact us
+                Contact Us
               </a>
             </li>
           </ul>
         </nav>
 
-        {/* footer/login */}
+        {/* footer login */}
         <div className="mt-auto px-4 py-6">
-          <a href="/account/login" className="block text-center bg-green-600 text-white py-3 rounded-lg font-medium">
+          <a
+            href="/account/login"
+            className="block text-center bg-green-600 text-white py-3 rounded-lg font-medium"
+          >
             Login
           </a>
         </div>
