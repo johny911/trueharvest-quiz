@@ -21,34 +21,24 @@ export default function Step6Recommendation({ formData, prevStep }) {
   const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
-    const preloadImages = () => {
-      const imgList = [
-        '/images/inflammation.png',
-        '/images/heart.png',
-        '/images/insulin.png',
-      ];
-      imgList.forEach((src) => {
-        const img = new Image();
-        img.src = src;
-      });
-    };
-
-    const runRecommendation = async () => {
-      preloadImages(); // preload illustrations
-
-      const recs = recommendOils(formData);
-      setRecommendations(recs);
-      await fetchPricesAndBuildSummary(recs);
-      await submitToSupabase(recs);
-
-      // Add artificial delay to allow images to preload
-      await new Promise((resolve) => setTimeout(resolve, 6000));
-
-      setLoading(false);
-    };
-
-    runRecommendation();
+    preloadIllustrations();
+    const recs = recommendOils(formData);
+    setRecommendations(recs);
+    fetchPricesAndBuildSummary(recs);
+    submitToSupabase(recs);
   }, []);
+
+  const preloadIllustrations = () => {
+    const images = [
+      '/images/inflammation.png',
+      '/images/heart.png',
+      '/images/insulin.png'
+    ];
+    images.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  };
 
   const fetchPricesAndBuildSummary = async (recs) => {
     let total = 0;
@@ -86,18 +76,17 @@ export default function Step6Recommendation({ formData, prevStep }) {
 
     setSummary(items);
     setTotalPrice(total);
-    const cartLink = buildCartUrl(items);
-    setCartUrl(cartLink);
+    setCartUrl(buildCartUrl(items));
+    setLoading(false);
   };
 
   const getVariantId = (name, volume) => {
     const lower = name.toLowerCase();
     const volumeText = volume.toLowerCase();
     for (const [id, info] of Object.entries(variantInfo)) {
-      const title = id.toString();
       if (
         info.handle.includes(lower.replace(' oil', '').replace(/\s/g, '-')) &&
-        title.includes(volumeText === '1l' ? '22856' : '55624')
+        id.includes(volumeText === '1l' ? '22856' : '55624')
       ) {
         return id;
       }
