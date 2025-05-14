@@ -85,7 +85,7 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
 
         {/* Recommended Oils */}
         <div className="space-y-3">
-          <h2 className="text-base font-semibold text-gray-800">Your Recommended Combo</h2>
+          <h2 className="text-lg font-semibold text-gray-800">Your Oil Plan for the Next 30 Days</h2>
           {summary.map((item, index) => (
             <div
               key={index}
