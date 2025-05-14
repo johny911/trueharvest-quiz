@@ -32,8 +32,11 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
 
   const updateQuantity = async (index, delta) => {
     const newSummary = [...summary];
+    const currentQty = newSummary[index].quantity;
+
+    if (delta === -1 && currentQty === 1) return; // Prevent removing item when quantity is 1
+
     newSummary[index].quantity += delta;
-    if (newSummary[index].quantity < 1) newSummary.splice(index, 1);
 
     const newTotal = newSummary.reduce((acc, item) => acc + item.quantity * item.price, 0);
     setSummary(newSummary);
@@ -65,7 +68,6 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
           <p className="text-sm text-gray-600">Based on your answers, here’s your personalized oil recommendation.</p>
         </div>
 
-        {/* Warnings */}
         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
           <h2 className="text-base font-semibold text-red-700 mb-3">The refined oil you’re using could be causing:</h2>
           <div className="flex justify-between gap-2 mb-3">
@@ -85,7 +87,6 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
           <p className="text-xs text-gray-600 text-center">{warnings[activeTab].description}</p>
         </div>
 
-        {/* Recommendations */}
         <div className="space-y-3">
           <h2 className="text-base font-semibold text-gray-800">Your Oil Plan for the Next 30 Days</h2>
           {summary.map((item, index) => (
