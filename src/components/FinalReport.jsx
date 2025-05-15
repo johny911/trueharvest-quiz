@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+- import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
 export default function FinalReport({ formData, summary: initialSummary, totalPrice: initialTotalPrice }) {
@@ -26,25 +26,26 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
 
   const buildFastrrUrl = (items) => {
     const base = 'https://trueharvest.store/';
-    const productParam = items.map((item) => `${item.id}:${item.quantity}`).join(',');
-    return `${base}?isFastrrProduct=true&fastrr_link_type=CHECKOUT_LINK&seller-domain=trueharvest.store&products=${encodeURIComponent(productParam)}`;
+    const productParam = items.map((item) => ${item.id}:${item.quantity}).join(',');
+    return ${base}?isFastrrProduct=true&fastrr_link_type=CHECKOUT_LINK&seller-domain=trueharvest.store&products=${encodeURIComponent(productParam)};
   };
 
   const updateQuantity = async (index, delta) => {
     const newSummary = [...summary];
     const currentQty = newSummary[index].quantity;
-    if (delta === -1 && currentQty === 1) return; // Prevent removal at 1
+
+    if (delta === -1 && currentQty === 1) return; // Prevent removing item when quantity is 1
 
     newSummary[index].quantity += delta;
-    const newTotal = newSummary.reduce((acc, item) => acc + item.quantity * item.price, 0);
 
+    const newTotal = newSummary.reduce((acc, item) => acc + item.quantity * item.price, 0);
     setSummary(newSummary);
     setTotalPrice(newTotal);
 
     await supabase
       .from('quiz_responses')
       .update({
-        recommended_oils: newSummary.map(item => `${item.title} - ${item.quantity}L`)
+        recommended_oils: newSummary.map(item => ${item.title} - ${item.quantity}L)
       })
       .eq('phone', formData.phone);
   };
@@ -61,54 +62,37 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 flex flex-col space-y-6">
-        {/* Greeting */}
+      <div className="w-full max-w-2xl space-y-6 bg-white rounded-2xl shadow-xl p-6">
         <div className="space-y-1 text-center">
           <h1 className="text-2xl font-bold text-gray-800">Hi {formData?.name},</h1>
-          <p className="text-sm text-gray-600">
-            Based on your answers, here’s your personalized oil recommendation.
-          </p>
+          <p className="text-sm text-gray-600">Based on your answers, here’s your personalized oil recommendation.</p>
         </div>
 
-        {/* Warning section */}
         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-          <h2 className="text-base font-semibold text-red-700 mb-3">
-            The refined oil you’re using could be causing:
-          </h2>
+          <h2 className="text-base font-semibold text-red-700 mb-3">The refined oil you’re using could be causing:</h2>
           <div className="flex justify-between gap-2 mb-3">
             {Object.keys(warnings).map((key) => (
               <button
                 key={key}
                 onClick={() => setActiveTab(key)}
-                className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
-                  activeTab === key
-                    ? 'bg-red-100 border-red-300'
-                    : 'bg-white border-gray-200 hover:border-red-400'
-                }`}
+                className={w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
+                  activeTab === key ? 'bg-red-100 border-red-300' : 'bg-white border-gray-200 hover:border-red-400'
+                }}
               >
-                <img
-                  src={warnings[key].image}
-                  alt={key}
-                  className="h-16 mb-2 object-contain"
-                />
-                <span className="text-xs font-medium text-red-700 text-center">
-                  {warnings[key].title}
-                </span>
+                <img src={warnings[key].image} alt={key} className="h-16 mb-2 object-contain" />
+                <span className="text-xs font-medium text-red-700 text-center">{warnings[key].title}</span>
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-600 text-center">
-            {warnings[activeTab].description}
-          </p>
+          <p className="text-xs text-gray-600 text-center">{warnings[activeTab].description}</p>
         </div>
 
-        {/* Recommendations list */}
-        <div className="space-y-3 overflow-auto">
+        <div className="space-y-3">
           <h2 className="text-base font-semibold text-gray-800">Your Oil Plan for the Next 30 Days</h2>
           {summary.map((item, index) => (
             <div
               key={index}
-              className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm"
+              className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm relative"
             >
               <img
                 src={item.image}
@@ -117,9 +101,7 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
               />
               <div className="flex-1">
                 <p className="text-gray-800 font-medium text-sm mb-1">{item.title}</p>
-                <p className="text-gray-500 text-xs">
-                  ₹{item.price.toFixed(2)} × {item.quantity}
-                </p>
+                <p className="text-gray-500 text-xs">₹{item.price.toFixed(2)} × {item.quantity}</p>
                 <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
                   {getBadgeText(item.title)}
                 </div>
@@ -146,25 +128,24 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
               </div>
             </div>
           ))}
-        </div>
 
-        {/* Sticky footer */}
-        <div className="sticky bottom-0 bg-white pt-4">
           <div className="flex justify-between pt-2 border-t text-base font-semibold text-gray-800">
             <span>Total</span>
             <span>₹{totalPrice.toFixed(2)}</span>
           </div>
-          <a
-            href={fastrrUrl}
-            className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition mt-3"
-          >
-            Buy Now
-          </a>
-          <p className="text-center text-xs text-gray-400 mt-2">
-            Make the switch. Your health deserves better.
-          </p>
         </div>
+
+        <a
+          href={fastrrUrl}
+          className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition"
+        >
+          Buy Now
+        </a>
+
+        <p className="text-center text-xs text-gray-400 mt-2">
+          Make the switch. Your health deserves better.
+        </p>
       </div>
     </div>
   );
-}
+} 
