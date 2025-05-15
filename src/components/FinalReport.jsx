@@ -70,7 +70,7 @@ export default function FinalReport({
   const updateQuantity = async (index, delta) => {
     const newSummary = [...summary];
     const currentQty = newSummary[index].quantity;
-    if (delta === -1 && currentQty === 1) return; // Prevent removal at 1
+    if (delta === -1 && currentQty === 1) return;
 
     newSummary[index].quantity += delta;
     const newTotal = newSummary.reduce(
@@ -162,9 +162,9 @@ export default function FinalReport({
                 <p className="text-gray-800 font-medium text-sm mb-1">
                   {item.title}
                 </p>
-                {/* ONLY show full non-discounted price here */}
+                {/* now shows the BEFORE-discount price */}
                 <p className="text-sm text-gray-500">
-                  ₹{item.price.toFixed(2)} × {item.quantity}
+                  ₹{(item.compareAtPrice ?? item.price).toFixed(2)} × {item.quantity}
                 </p>
                 <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
                   {getBadgeText(item.title)}
