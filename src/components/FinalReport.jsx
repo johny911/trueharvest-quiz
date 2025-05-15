@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
-export default function FinalReport({ formData, summary: initialSummary, totalPrice: initialTotalPrice }) {
+export default function FinalReport({
+  formData,
+  summary: initialSummary,
+  totalPrice: initialTotalPrice
+}) {
   const [activeTab, setActiveTab] = useState('inflammation');
+  const [activeFeature, setActiveFeature] = useState('stone');
   const [summary, setSummary] = useState(initialSummary);
   const [totalPrice, setTotalPrice] = useState(initialTotalPrice);
 
@@ -10,24 +15,50 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
     inflammation: {
       image: '/images/inflammation.png',
       title: 'Inflammation',
-      description: 'Refined oils are high in omega-6 fatty acids which can trigger chronic inflammation in the body.'
+      description:
+        'Refined oils are high in omega-6 fatty acids which can trigger chronic inflammation in the body.'
     },
     heart: {
       image: '/images/heart.png',
       title: 'Heart Disease',
-      description: 'Chemically extracted oils may damage blood vessels and raise bad cholesterol.'
+      description:
+        'Chemically extracted oils may damage blood vessels and raise bad cholesterol.'
     },
     insulin: {
       image: '/images/insulin.png',
       title: 'Insulin Resistance & Diabetes',
-      description: 'Refined oils impair insulin sensitivity and increase the risk of developing diabetes.'
+      description:
+        'Refined oils impair insulin sensitivity and increase the risk of developing diabetes.'
+    }
+  };
+
+  const features = {
+    stone: {
+      image: '/images/stone-pressed.png',
+      title: 'Stone Pressed',
+      description:
+        'Traditional stone-pressing retains maximum nutrients by gently extracting oil without heat.'
+    },
+    sunlight: {
+      image: '/images/sunlight-dried.png',
+      title: 'Sunlight Dried',
+      description:
+        'Our oil is sedimented under the sun for 10 days—no filtration—so you get all the goodness.'
+    },
+    heirloom: {
+      image: '/images/heirloom-seeds.png',
+      title: 'Heirloom Seeds',
+      description:
+        'We use native, non-GMO seeds for pure, unadulterated flavor and nutrition.'
     }
   };
 
   const buildFastrrUrl = (items) => {
     const base = 'https://trueharvest.store/';
     const productParam = items.map((item) => `${item.id}:${item.quantity}`).join(',');
-    return `${base}?isFastrrProduct=true&fastrr_link_type=CHECKOUT_LINK&seller-domain=trueharvest.store&products=${encodeURIComponent(productParam)}`;
+    return `${base}?isFastrrProduct=true&fastrr_link_type=CHECKOUT_LINK&seller-domain=trueharvest.store&products=${encodeURIComponent(
+      productParam
+    )}`;
   };
 
   const updateQuantity = async (index, delta) => {
@@ -44,7 +75,7 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
     await supabase
       .from('quiz_responses')
       .update({
-        recommended_oils: newSummary.map(item => `${item.title} - ${item.quantity}L`)
+        recommended_oils: newSummary.map((item) => `${item.title} - ${item.quantity}L`)
       })
       .eq('phone', formData.phone);
   };
@@ -102,28 +133,43 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
           </p>
         </div>
 
-        {/* New: What makes our oils different */}
-        <div className="space-y-3">
-          <h2 className="text-base font-semibold text-gray-800">What makes our oils different</h2>
-          <div className="flex justify-between">
-            <div className="w-1/3 flex flex-col items-center text-center">
-              <img src="/images/stone-pressed.png" alt="Stone Pressed" className="h-16 mb-2 object-contain" />
-              <span className="text-sm font-medium text-gray-800">Stone Pressed</span>
-            </div>
-            <div className="w-1/3 flex flex-col items-center text-center">
-              <img src="/images/sunlight-dried.png" alt="Sunlight Dried" className="h-16 mb-2 object-contain" />
-              <span className="text-sm font-medium text-gray-800">Sunlight Dried</span>
-            </div>
-            <div className="w-1/3 flex flex-col items-center text-center">
-              <img src="/images/heirloom-seeds.png" alt="Heirloom Seeds" className="h-16 mb-2 object-contain" />
-              <span className="text-sm font-medium text-gray-800">Heirloom Seeds</span>
-            </div>
+        {/* What makes our oils different */}
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+          <h2 className="text-base font-semibold text-green-700 mb-3">
+            What makes our oils different?
+          </h2>
+          <div className="flex justify-between gap-2 mb-3">
+            {Object.keys(features).map((key) => (
+              <button
+                key={key}
+                onClick={() => setActiveFeature(key)}
+                className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
+                  activeFeature === key
+                    ? 'bg-green-100 border-green-300'
+                    : 'bg-white border-gray-200 hover:border-green-300'
+                }`}
+              >
+                <img
+                  src={features[key].image}
+                  alt={features[key].title}
+                  className="h-16 mb-2 object-contain"
+                />
+                <span className="text-xs font-medium text-green-700 text-center">
+                  {features[key].title}
+                </span>
+              </button>
+            ))}
           </div>
+          <p className="text-xs text-gray-600 text-center">
+            {features[activeFeature].description}
+          </p>
         </div>
 
         {/* Recommendations list */}
         <div className="space-y-3 overflow-auto">
-          <h2 className="text-base font-semibold text-gray-800">Your Oil Plan for the Next 30 Days</h2>
+          <h2 className="text-base font-semibold text-gray-800">
+            Your Oil Plan for the Next 30 Days
+          </h2>
           {summary.map((item, index) => (
             <div
               key={index}
