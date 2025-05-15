@@ -1,3 +1,4 @@
+// src/components/Step6Recommendation.jsx
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import recommendOils from '../utils/recommendOils';
@@ -18,6 +19,7 @@ export default function Step6Recommendation({ formData, prevStep }) {
   const [submitted, setSubmitted] = useState(false);
   const [summary, setSummary] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [cartUrl, setCartUrl] = useState('');
 
   useEffect(() => {
     preloadIllustrations();
@@ -37,6 +39,7 @@ export default function Step6Recommendation({ formData, prevStep }) {
 
   const fetchPricesAndBuildSummary = async (recs) => {
     let total = 0;
+
     const items = await Promise.all(
       recs.map(async ({ name, quantity }) => {
         const variantId = quantity >= 1
@@ -53,8 +56,7 @@ export default function Step6Recommendation({ formData, prevStep }) {
         const compareAtPrice = variant.compare_at_price
           ? parseFloat(variant.compare_at_price) / 100
           : price;
-        const lineTotal = qty * price;
-        total += lineTotal;
+        total += qty * price;
 
         const image =
           variant?.featured_image?.src ||
@@ -68,13 +70,13 @@ export default function Step6Recommendation({ formData, prevStep }) {
           quantity: qty,
           price,
           compareAtPrice,
-          lineTotal,
         };
       })
     );
 
     setSummary(items);
     setTotalPrice(total);
+    setCartUrl(buildCartUrl(items));
     setLoading(false);
   };
 
@@ -93,6 +95,11 @@ export default function Step6Recommendation({ formData, prevStep }) {
       variantInfo[id].handle.includes(lower.replace(' oil', '').replace(/\s/g, '-')) &&
       id.includes(volumeText === '1l' ? '6' : '16')
     );
+  };
+
+  const buildCartUrl = (items) => {
+    const base = 'https://trueharvest.store/cart/';
+    return base + items.map(i => `${i.id}:${i.quantity}`).join(',');
   };
 
   const submitToSupabase = async (recommendedOils) => {
@@ -114,6 +121,7 @@ export default function Step6Recommendation({ formData, prevStep }) {
         formData={formData}
         summary={summary}
         totalPrice={totalPrice}
+        cartUrl={cartUrl}
       />
     );
   }
