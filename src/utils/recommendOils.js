@@ -1,54 +1,90 @@
-// src/utils/recommendOils.js
-
+// src/utils/recommendOils.jsx
 export default function recommendOils({ adults, kids, currentOils }) {
-  // Calculate total requirement (1 L per adult, 0.5 L per kid)
   const total = adults * 1 + kids * 0.5;
+
+  // Normalize their selections into the 3 available oils
+  const hasGroundnut =
+    currentOils.includes('Refined Groundnut Oil') ||
+    currentOils.includes('Cold-Pressed Groundnut Oil') ||
+    currentOils.includes('Refined Sunflower Oil') || // treated as groundnut
+    currentOils.includes('Cold-Pressed Mustard Oil'); // treated as groundnut
+
+  const hasCoconut =
+    currentOils.includes('Refined Coconut Oil') ||
+    currentOils.includes('Cold-Pressed Coconut Oil');
+
+  const hasSesame =
+    currentOils.includes('Refined Sesame Oil') ||
+    currentOils.includes('Cold-Pressed Sesame Oil');
+
+  // Build list of oils to recommend
+  let oils = [];
+  if (hasGroundnut) oils.push('Groundnut Oil');
+  if (hasCoconut) oils.push('Coconut Oil');
+  if (hasSesame) oils.push('Sesame Oil');
+
+  // Fallback if nothing matched
+  if (oils.length === 0) {
+    oils = ['Groundnut Oil', 'Coconut Oil'];
+  }
+
   const recs = [];
 
-  // Define which selections map to which oil
-  const coconutOpts = ['Refined Coconut Oil', 'Cold-Pressed Coconut Oil'];
-  const groundnutOpts = [
-    'Refined Groundnut Oil',
-    'Cold-Pressed Groundnut Oil',
-    'Refined Sunflower Oil',      // treated as Groundnut
-    'Cold-Pressed Sunflower Oil', // treated as Groundnut
-    'Cold-Pressed Mustard Oil'    // treated as Groundnut
-  ];
-  const sesameOpts = ['Refined Sesame Oil', 'Cold-Pressed Sesame Oil'];
+  if (oils.length === 1) {
+    // 100% of their need in that one oil
+    recs.push({
+      name: oils[0],
+      quantity: Math.ceil(total)
+    });
+  } else if (oils.length === 2) {
+    const [A, B] = oils;
+    let ratioA, ratioB;
 
-  const usesCoconut = currentOils.some(oil => coconutOpts.includes(oil));
-  const usesGroundnut = currentOils.some(oil => groundnutOpts.includes(oil));
-  const usesSesame = currentOils.some(oil => sesameOpts.includes(oil));
+    // If the pair is Coconut+Sesame → put more into Sesame
+    if (
+      (A === 'Coconut Oil' && B === 'Sesame Oil') ||
+      (A === 'Sesame Oil' && B === 'Coconut Oil')
+    ) {
+      if (A === 'Sesame Oil') {
+        ratioA = 0.6;
+        ratioB = 0.4;
+      } else {
+        ratioA = 0.4;
+        ratioB = 0.6;
+      }
+    } else {
+      // Otherwise Groundnut is primary (75/25)
+      if (A === 'Groundnut Oil') {
+        ratioA = 0.75;
+        ratioB = 0.25;
+      } else {
+        ratioA = 0.25;
+        ratioB = 0.75;
+      }
+    }
 
-  // All three selected → 60% G, 20% C, 20% S
-  if (usesGroundnut && usesCoconut && usesSesame) {
-    recs.push({ name: 'Groundnut Oil', quantity: Math.ceil(total * 0.6) });
-    recs.push({ name: 'Coconut Oil',   quantity: Math.ceil(total * 0.2) });
-    recs.push({ name: 'Sesame Oil',    quantity: Math.ceil(total * 0.2) });
-
-  // Any two selected → 75/25 split, bias to the first in the pair
-  } else if (usesGroundnut && usesCoconut) {
-    recs.push({ name: 'Groundnut Oil', quantity: Math.ceil(total * 0.75) });
-    recs.push({ name: 'Coconut Oil',   quantity: Math.ceil(total * 0.25) });
-  } else if (usesGroundnut && usesSesame) {
-    recs.push({ name: 'Groundnut Oil', quantity: Math.ceil(total * 0.75) });
-    recs.push({ name: 'Sesame Oil',    quantity: Math.ceil(total * 0.25) });
-  } else if (usesCoconut && usesSesame) {
-    recs.push({ name: 'Coconut Oil',   quantity: Math.ceil(total * 0.75) });
-    recs.push({ name: 'Sesame Oil',    quantity: Math.ceil(total * 0.25) });
-
-  // Only one selected → give 100% of total
-  } else if (usesGroundnut) {
-    recs.push({ name: 'Groundnut Oil', quantity: Math.ceil(total) });
-  } else if (usesCoconut) {
-    recs.push({ name: 'Coconut Oil',   quantity: Math.ceil(total) });
-  } else if (usesSesame) {
-    recs.push({ name: 'Sesame Oil',    quantity: Math.ceil(total) });
-
-  // Fallback if none explicitly selected → default 75% G / 25% C
+    recs.push({
+      name: A,
+      quantity: Math.ceil(total * ratioA)
+    });
+    recs.push({
+      name: B,
+      quantity: Math.ceil(total * ratioB)
+    });
   } else {
-    recs.push({ name: 'Groundnut Oil', quantity: Math.ceil(total * 0.75) });
-    recs.push({ name: 'Coconut Oil',   quantity: Math.ceil(total * 0.25) });
+    // All three: Groundnut 50%, Coconut 30%, Sesame 20%
+    recs.push({
+      name: 'Groundnut Oil',
+      quantity: Math.ceil(total * 0.5)
+    });
+    recs.push({
+      name: 'Coconut Oil',
+      quantity: Math.ceil(total * 0.3)
+    });
+    recs.push({
+      name: 'Sesame Oil',
+      quantity: Math.ceil(total * 0.2)
+    });
   }
 
   return recs;
