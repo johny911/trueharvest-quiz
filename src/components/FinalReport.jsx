@@ -88,7 +88,7 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
               >
                 <img
                   src={warnings[key].image}
-                  alt={key}
+                  alt={warnings[key].title}
                   className="h-16 mb-2 object-contain"
                 />
                 <span className="text-xs font-medium text-red-700 text-center">
@@ -100,6 +100,25 @@ export default function FinalReport({ formData, summary: initialSummary, totalPr
           <p className="text-xs text-gray-600 text-center">
             {warnings[activeTab].description}
           </p>
+        </div>
+
+        {/* New: What makes our oils different */}
+        <div className="space-y-3">
+          <h2 className="text-base font-semibold text-gray-800">What makes our oils different</h2>
+          <div className="flex justify-between">
+            <div className="w-1/3 flex flex-col items-center text-center">
+              <img src="/images/stone-pressed.png" alt="Stone Pressed" className="h-16 mb-2 object-contain" />
+              <span className="text-sm font-medium text-gray-800">Stone Pressed</span>
+            </div>
+            <div className="w-1/3 flex flex-col items-center text-center">
+              <img src="/images/sunlight-dried.png" alt="Sunlight Dried" className="h-16 mb-2 object-contain" />
+              <span className="text-sm font-medium text-gray-800">Sunlight Dried</span>
+            </div>
+            <div className="w-1/3 flex flex-col items-center text-center">
+              <img src="/images/heirloom-seeds.png" alt="Heirloom Seeds" className="h-16 mb-2 object-contain" />
+              <span className="text-sm font-medium text-gray-800">Heirloom Seeds</span>
+            </div>
+          </div>
         </div>
 
         {/* Recommendations list */}
