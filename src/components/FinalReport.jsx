@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react'
-import { supabase } from '../supabaseClient'
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
 
 export default function FinalReport({
   formData,
   summary: initialSummary,
   totalPrice: initialTotalPrice
 }) {
-  const [activeTab, setActiveTab] = useState('inflammation')
-  const [activeFeature, setActiveFeature] = useState('stone')
-  const [summary, setSummary] = useState(initialSummary)
-  const [totalPrice, setTotalPrice] = useState(initialTotalPrice)
+  const [activeTab, setActiveTab] = useState('inflammation');
+  const [activeFeature, setActiveFeature] = useState('stone');
+  const [summary, setSummary] = useState(initialSummary);
+  const [totalPrice, setTotalPrice] = useState(initialTotalPrice);
 
   // Compute original total (using compareAtPrice where available)
   const originalTotal = summary.reduce(
     (acc, item) =>
       acc + (item.compareAtPrice ?? item.price) * item.quantity,
     0
-  )
+  );
 
   const warnings = {
     inflammation: {
@@ -37,7 +37,7 @@ export default function FinalReport({
       description:
         'Refined oils impair insulin sensitivity and increase the risk of developing diabetes.'
     }
-  }
+  };
 
   const features = {
     stone: {
@@ -58,28 +58,28 @@ export default function FinalReport({
       description:
         'We use native, non-GMO seeds for pure, unadulterated flavor and nutrition.'
     }
-  }
+  };
 
   const buildFastrrUrl = (items) => {
-    const base = 'https://trueharvest.store/'
-    const productParam = items.map((i) => `${i.id}:${i.quantity}`).join(',')
+    const base = 'https://trueharvest.store/';
+    const productParam = items.map((i) => `${i.id}:${i.quantity}`).join(',');
     return `${base}?isFastrrProduct=true&fastrr_link_type=CHECKOUT_LINK&seller-domain=trueharvest.store&products=${encodeURIComponent(
       productParam
-    )}`
-  }
+    )}`;
+  };
 
   const updateQuantity = async (index, delta) => {
-    const newSummary = [...summary]
-    const currentQty = newSummary[index].quantity
-    if (delta === -1 && currentQty === 1) return
+    const newSummary = [...summary];
+    const currentQty = newSummary[index].quantity;
+    if (delta === -1 && currentQty === 1) return;
 
-    newSummary[index].quantity += delta
+    newSummary[index].quantity += delta;
     const newTotal = newSummary.reduce(
       (acc, item) => acc + item.quantity * item.price,
       0
-    )
-    setSummary(newSummary)
-    setTotalPrice(newTotal)
+    );
+    setSummary(newSummary);
+    setTotalPrice(newTotal);
 
     await supabase
       .from('quiz_responses')
@@ -88,18 +88,18 @@ export default function FinalReport({
           (item) => `${item.title} - ${item.quantity}L`
         )
       })
-      .eq('phone', formData.phone)
-  }
+      .eq('phone', formData.phone);
+  };
 
   const getBadgeText = (title) => {
-    const l = title.toLowerCase()
-    if (l.includes('sesame')) return 'Molasses Free'
-    if (l.includes('coconut')) return 'Sulfur Free Copra'
-    if (l.includes('groundnut')) return 'Heirloom Groundnut'
-    return 'GMO Free'
-  }
+    const lower = title.toLowerCase();
+    if (lower.includes('sesame')) return 'Molasses Free';
+    if (lower.includes('coconut')) return 'Sulfur Free Copra';
+    if (lower.includes('groundnut')) return 'Heirloom Groundnut';
+    return 'GMO Free';
+  };
 
-  const fastrrUrl = buildFastrrUrl(summary)
+  const fastrrUrl = buildFastrrUrl(summary);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
@@ -152,7 +152,7 @@ export default function FinalReport({
             Your Oil Plan for the Next 30 Days
           </h2>
           {summary.map((item, idx) => {
-            const unit = item.compareAtPrice ?? item.price
+            const unit = item.compareAtPrice ?? item.price;
             return (
               <div
                 key={idx}
@@ -193,13 +193,12 @@ export default function FinalReport({
                       +
                     </button>
                   </div>
-                  {/* per-item total also uses the before-discount price */}
                   <div className="text-green-700 font-semibold text-sm mt-1">
                     ₹{(unit * item.quantity).toFixed(2)}
                   </div>
                 </div>
               </div>
-            )
+            );
           })}
         </div>
 
@@ -216,7 +215,7 @@ export default function FinalReport({
                 className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
                   activeFeature === key
                     ? 'bg-green-100 border-green-300'
-                    : 'bg-white border-gray-200 hover:border-green-300'
+                    : 'bg-white border-gray-200 hover:border-green-300' 
                 }`}
               >
                 <img
@@ -237,14 +236,19 @@ export default function FinalReport({
 
         {/* Sticky footer */}
         <div className="sticky bottom-0 bg-white pt-4">
-          <div className="flex justify-between pt-2 border-t text-base font-semibold text-gray-800">
-            <span>Total</span>
-            <span>
-              <span className="line-through mr-2">
-                ₹{originalTotal.toFixed(2)}
+          <div className="flex justify-between pt-2 border-t">
+            <span className="text-base font-semibold text-gray-800">Total</span>
+            <div className="flex flex-col items-end">
+              <span className="text-base font-semibold text-gray-800">
+                <span className="line-through mr-2">
+                  ₹{originalTotal.toFixed(2)}
+                </span>
+                ₹{totalPrice.toFixed(2)}
               </span>
-              ₹{totalPrice.toFixed(2)}
-            </span>
+              <span className="text-xs text-gray-500">
+                Inclusive of all taxes
+              </span>
+            </div>
           </div>
           <a
             href={fastrrUrl}
@@ -258,5 +262,5 @@ export default function FinalReport({
         </div>
       </div>
     </div>
-  )
+  );
 }
