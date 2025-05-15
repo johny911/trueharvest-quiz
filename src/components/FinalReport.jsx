@@ -6,7 +6,7 @@ export default function FinalReport({
   formData,
   summary: initialSummary,
   totalPrice: initialTotalPrice,
-  cartUrl,                // ← your Shopify cart permalink
+  cartUrl
 }) {
   const [activeTab, setActiveTab] = useState('inflammation');
   const [activeFeature, setActiveFeature] = useState('stone');
@@ -14,12 +14,10 @@ export default function FinalReport({
   const [summary, setSummary] = useState(initialSummary);
   const [totalPrice, setTotalPrice] = useState(initialTotalPrice);
 
-  // Build a direct Shopify checkout link
-  const checkoutUrl = `${cartUrl}/checkout`;
-
-  // Compute original total (using compareAtPrice if available)
+  // Compute original total (using compareAtPrice where available)
   const originalTotal = summary.reduce(
-    (acc, item) => acc + (item.compareAtPrice ?? item.price) * item.quantity,
+    (acc, item) =>
+      acc + (item.compareAtPrice ?? item.price) * item.quantity,
     0
   );
 
@@ -28,20 +26,20 @@ export default function FinalReport({
       image: '/images/inflammation.png',
       title: 'Inflammation',
       description:
-        'Refined oils are high in omega-6 fatty acids which can trigger chronic inflammation in the body.',
+        'Refined oils are high in omega-6 fatty acids which can trigger chronic inflammation in the body.'
     },
     heart: {
       image: '/images/heart.png',
       title: 'Heart Disease',
       description:
-        'Chemically extracted oils may damage blood vessels and raise bad cholesterol.',
+        'Chemically extracted oils may damage blood vessels and raise bad cholesterol.'
     },
     insulin: {
       image: '/images/insulin.png',
       title: 'Insulin Resistance & Diabetes',
       description:
-        'Refined oils impair insulin sensitivity and increase the risk of developing diabetes.',
-    },
+        'Refined oils impair insulin sensitivity and increase the risk of developing diabetes.'
+    }
   };
 
   const features = {
@@ -49,20 +47,20 @@ export default function FinalReport({
       image: '/images/stone-pressed.png',
       title: 'Stone Pressed',
       description:
-        'Traditional stone-pressing retains maximum nutrients by gently extracting oil without heat.',
+        'Traditional stone-pressing retains maximum nutrients by gently extracting oil without heat.'
     },
     sunlight: {
       image: '/images/sunlight-dried.png',
       title: 'Sunlight Dried',
       description:
-        'Our oil settles naturally under the sun for 10 days—no filtration—so you get all the goodness.',
+        'Our oil settles naturally under the sun for 10 days—no filtration—so you get all the goodness.'
     },
     heirloom: {
       image: '/images/heirloom-seeds.png',
       title: 'Heirloom Seeds',
       description:
-        'We use native, non-GMO seeds for pure, unadulterated flavor and nutrition.',
-    },
+        'We use native, non-GMO seeds for pure, unadulterated flavor and nutrition.'
+    }
   };
 
   const myths = {
@@ -70,20 +68,20 @@ export default function FinalReport({
       image: '/images/heat-hype.png',
       title: 'Heat & Hype',
       description:
-        'Big factories push “cold-pressed” oil through giant machines at high speed. That friction heats it, destroying delicate nutrients—so it’s almost as “dead” as refined oil.',
+        'Big factories push “cold-pressed” oil through giant machines at high speed. That friction heats it, destroying delicate nutrients—so it’s almost as “dead” as refined oil.'
     },
     stripped: {
       image: '/images/stripped-of-goodness.png',
       title: 'Stripped of Goodness',
       description:
-        'Real cold-pressed oil settles naturally in sunlight, keeping all its vitamins and antioxidants. Commercial brands force-filter their batches in minutes, washing away the very nutrients you paid for.',
+        'Real cold-pressed oil settles naturally in sunlight, keeping all its vitamins and antioxidants. Commercial brands force-filter their batches in minutes, washing away the very nutrients you paid for.'
     },
     whiteLabel: {
       image: '/images/white-label-deception.png',
       title: 'White-Label Deception',
       description:
-        'Many popular “cold-pressed” oils are actually mass-produced white-label products—you never know if it’s genuine or just re-branded factory output.',
-    },
+        'Many popular “cold-pressed” oils are actually mass-produced white-label products—you never know if it’s genuine or just re-branded factory output.'
+    }
   };
 
   const updateQuantity = async (index, delta) => {
@@ -91,20 +89,18 @@ export default function FinalReport({
     const currentQty = newSummary[index].quantity;
     if (delta === -1 && currentQty === 1) return;
     newSummary[index].quantity += delta;
-
     const newTotal = newSummary.reduce(
       (acc, item) => acc + item.quantity * item.price,
       0
     );
     setSummary(newSummary);
     setTotalPrice(newTotal);
-
     await supabase
       .from('quiz_responses')
       .update({
         recommended_oils: newSummary.map(
           (item) => `${item.title} - ${item.quantity}L`
-        ),
+        )
       })
       .eq('phone', formData.phone);
   };
@@ -116,6 +112,9 @@ export default function FinalReport({
     if (lower.includes('groundnut')) return 'Heirloom Groundnut';
     return 'GMO Free';
   };
+
+  // 👉 Change is here: point to cartUrl directly
+  const checkoutUrl = cartUrl;
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
