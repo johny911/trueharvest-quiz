@@ -113,6 +113,9 @@ export default function FinalReport({
     return 'GMO Free';
   };
 
+  // Shopify “buy now” directly to checkout
+  const checkoutUrl = `${cartUrl}/checkout`;
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 flex flex-col space-y-6">
@@ -253,7 +256,6 @@ export default function FinalReport({
           </h2>
           <div className="flex justify-between gap-2 mb-3">
             {Object.keys(features).map((key) => (
-
               <button
                 key={key}
                 onClick={() => setActiveFeature(key)}
@@ -296,7 +298,7 @@ export default function FinalReport({
             </div>
           </div>
           <a
-            href={cartUrl}
+            href={checkoutUrl}
             className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition mt-3"
           >
             Buy Now
