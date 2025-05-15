@@ -1,3 +1,4 @@
+// src/components/Step2Phone.jsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
@@ -47,8 +48,11 @@ export default function Step2Phone({ formData, updateForm, nextStep, prevStep })
           <input
             type="tel"
             value={phone}
+            maxLength={10}
             onChange={(e) => {
-              setPhone(e.target.value);
+              // strip non-digits and limit to 10 chars
+              const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+              setPhone(digits);
               setError(false);
             }}
             placeholder="Enter 10-digit mobile number"
@@ -60,7 +64,9 @@ export default function Step2Phone({ formData, updateForm, nextStep, prevStep })
             )}
           />
           {error && (
-            <p className="text-sm text-red-500 mt-1">Please enter a valid 10-digit phone number</p>
+            <p className="text-sm text-red-500 mt-1">
+              Please enter a valid 10-digit phone number
+            </p>
           )}
         </div>
 
