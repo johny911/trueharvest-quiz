@@ -16,7 +16,6 @@ export default function Step6Recommendation({ formData, prevStep }) {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
-  const [cartUrl, setCartUrl] = useState('');
   const [summary, setSummary] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
@@ -29,15 +28,11 @@ export default function Step6Recommendation({ formData, prevStep }) {
   }, []);
 
   const preloadIllustrations = () => {
-    const images = [
-      '/images/inflammation.png',
-      '/images/heart.png',
-      '/images/insulin.png'
-    ];
-    images.forEach(src => {
-      const img = new Image();
-      img.src = src;
-    });
+    ['/images/inflammation.png', '/images/heart.png', '/images/insulin.png']
+      .forEach(src => {
+        const img = new Image();
+        img.src = src;
+      });
   };
 
   const fetchPricesAndBuildSummary = async (recs) => {
@@ -55,6 +50,9 @@ export default function Step6Recommendation({ formData, prevStep }) {
 
         const qty = Math.max(Math.round(quantity), 1);
         const price = parseFloat(variant.price) / 100;
+        const compareAtPrice = variant.compare_at_price
+          ? parseFloat(variant.compare_at_price) / 100
+          : price;
         const lineTotal = qty * price;
         total += lineTotal;
 
@@ -69,6 +67,7 @@ export default function Step6Recommendation({ formData, prevStep }) {
           image,
           quantity: qty,
           price,
+          compareAtPrice,
           lineTotal,
         };
       })
@@ -76,7 +75,6 @@ export default function Step6Recommendation({ formData, prevStep }) {
 
     setSummary(items);
     setTotalPrice(total);
-    setCartUrl(buildCartUrl(items));
     setLoading(false);
   };
 
@@ -97,12 +95,6 @@ export default function Step6Recommendation({ formData, prevStep }) {
     );
   };
 
-  const buildCartUrl = (items) => {
-    const base = 'https://trueharvest.store/cart/';
-    const parts = items.map(item => `${item.id}:${item.quantity}`);
-    return base + parts.join(',');
-  };
-
   const submitToSupabase = async (recommendedOils) => {
     await supabase.from('quiz_responses').insert({
       name: formData.name,
@@ -111,7 +103,7 @@ export default function Step6Recommendation({ formData, prevStep }) {
       kids: formData.kids,
       uses_cold_pressed: formData.usesColdPressed,
       current_oils: formData.currentOils,
-      recommended_oils: recommendedOils.map((r) => `${r.name} - ${r.quantity}L`)
+      recommended_oils: recommendedOils.map(r => `${r.name} - ${r.quantity}L`)
     });
     setSubmitted(true);
   };
@@ -119,11 +111,9 @@ export default function Step6Recommendation({ formData, prevStep }) {
   if (!loading && submitted) {
     return (
       <FinalReport
-        name={formData.name}
+        formData={formData}
         summary={summary}
         totalPrice={totalPrice}
-        cartUrl={cartUrl}
-        formData={formData}
       />
     );
   }
@@ -131,7 +121,9 @@ export default function Step6Recommendation({ formData, prevStep }) {
   return (
     <div className="w-full">
       <div className="bg-white shadow-xl rounded-2xl p-6 space-y-6">
-        <p className="text-center text-gray-500 text-sm">Calculating your recommendation...</p>
+        <p className="text-center text-gray-500 text-sm">
+          Calculating your recommendation...
+        </p>
       </div>
     </div>
   );

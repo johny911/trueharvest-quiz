@@ -11,6 +11,12 @@ export default function FinalReport({
   const [summary, setSummary] = useState(initialSummary);
   const [totalPrice, setTotalPrice] = useState(initialTotalPrice);
 
+  // Calculate the original total (compare-at prices)
+  const originalTotal = summary.reduce(
+    (acc, item) => acc + (item.compareAtPrice ?? item.price) * item.quantity,
+    0
+  );
+
   const warnings = {
     inflammation: {
       image: '/images/inflammation.png',
@@ -55,9 +61,7 @@ export default function FinalReport({
 
   const buildFastrrUrl = (items) => {
     const base = 'https://trueharvest.store/';
-    const productParam = items
-      .map((item) => `${item.id}:${item.quantity}`)
-      .join(',');
+    const productParam = items.map((item) => `${item.id}:${item.quantity}`).join(',');
     return `${base}?isFastrrProduct=true&fastrr_link_type=CHECKOUT_LINK&seller-domain=trueharvest.store&products=${encodeURIComponent(
       productParam
     )}`;
@@ -69,10 +73,7 @@ export default function FinalReport({
     if (delta === -1 && currentQty === 1) return; // Prevent removal at 1
 
     newSummary[index].quantity += delta;
-    const newTotal = newSummary.reduce(
-      (acc, item) => acc + item.quantity * item.price,
-      0
-    );
+    const newTotal = newSummary.reduce((acc, item) => acc + item.quantity * item.price, 0);
 
     setSummary(newSummary);
     setTotalPrice(newTotal);
@@ -157,7 +158,10 @@ export default function FinalReport({
                 <p className="text-gray-800 font-medium text-sm mb-1">
                   {item.title}
                 </p>
-                <p className="text-gray-500 text-xs">
+                <p className="text-xs text-gray-500 mb-1">
+                  <span className="line-through mr-2">
+                    ₹{(item.compareAtPrice ?? item.price).toFixed(2)}
+                  </span>
                   ₹{item.price.toFixed(2)} × {item.quantity}
                 </p>
                 <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
@@ -188,7 +192,7 @@ export default function FinalReport({
           ))}
         </div>
 
-        {/* What makes our oils different */}
+        {/* What makes our oils different? */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-4">
           <h2 className="text-base font-semibold text-green-700 mb-3">
             What makes our oils different?
@@ -224,7 +228,10 @@ export default function FinalReport({
         <div className="sticky bottom-0 bg-white pt-4">
           <div className="flex justify-between pt-2 border-t text-base font-semibold text-gray-800">
             <span>Total</span>
-            <span>₹{totalPrice.toFixed(2)}</span>
+            <span>
+              <span className="line-through mr-2">₹{originalTotal.toFixed(2)}</span>
+              ₹{totalPrice.toFixed(2)}
+            </span>
           </div>
           <a
             href={fastrrUrl}
