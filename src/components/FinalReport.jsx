@@ -1,5 +1,5 @@
 // src/components/FinalReport.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 
 export default function FinalReport({
@@ -135,37 +135,72 @@ export default function FinalReport({
           </p>
         </div>
 
-        {/* Warning section */}
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-          <h2 className="text-base font-semibold text-red-700 mb-3">
-            The refined oil you’re using could be causing:
-          </h2>
-          <div className="flex justify-between gap-2 mb-3">
-            {Object.keys(warnings).map((key) => (
-              <button
-                key={key}
-                onClick={() => setActiveTab(key)}
-                className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
-                  activeTab === key
-                    ? 'bg-red-100 border-red-300'
-                    : 'bg-white border-gray-200 hover:border-red-400'
-                }`}
-              >
-                <img
-                  src={warnings[key].image}
-                  alt={warnings[key].title}
-                  className="h-16 mb-2 object-contain"
-                />
-                <span className="text-xs font-medium text-red-700 text-center">
-                  {warnings[key].title}
-                </span>
-              </button>
-            ))}
+        {/* Conditional section */}
+        {!formData.usesColdPressed ? (
+          /* Show refined-oil warning if user does NOT use cold-pressed yet */
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+            <h2 className="text-base font-semibold text-red-700 mb-3">
+              The refined oil you’re using could be causing:
+            </h2>
+            <div className="flex justify-between gap-2 mb-3">
+              {Object.keys(warnings).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setActiveTab(key)}
+                  className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
+                    activeTab === key
+                      ? 'bg-red-100 border-red-300'
+                      : 'bg-white border-gray-200 hover:border-red-400'
+                  }`}
+                >
+                  <img
+                    src={warnings[key].image}
+                    alt={warnings[key].title}
+                    className="h-16 mb-2 object-contain"
+                  />
+                  <span className="text-xs font-medium text-red-700 text-center">
+                    {warnings[key].title}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-gray-600 text-center">
+              {warnings[activeTab].description}
+            </p>
           </div>
-          <p className="text-xs text-gray-600 text-center">
-            {warnings[activeTab].description}
-          </p>
-        </div>
+        ) : (
+          /* Show cold-press myths if user already uses cold-pressed */
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+            <h2 className="text-base font-semibold text-yellow-700 mb-3">
+              You’re on cold-pressed oil—nice! But beware: not all cold-pressed oils are created equal.
+            </h2>
+            <div className="flex justify-between gap-2 mb-3">
+              {Object.keys(myths).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setActiveMyth(key)}
+                  className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
+                    activeMyth === key
+                      ? 'bg-yellow-100 border-yellow-300'
+                      : 'bg-white border-gray-200 hover:border-yellow-300'
+                  }`}
+                >
+                  <img
+                    src={myths[key].image}
+                    alt={myths[key].title}
+                    className="h-16 mb-2 object-contain"
+                  />
+                  <span className="text-xs font-medium text-yellow-700 text-center">
+                    {myths[key].title}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-gray-600 text-center">
+              {myths[activeMyth].description}
+            </p>
+          </div>
+        )}
 
         {/* Recommendations list */}
         <div className="space-y-3 overflow-auto">
@@ -251,38 +286,6 @@ export default function FinalReport({
           </div>
           <p className="text-xs text-gray-600 text-center">
             {features[activeFeature].description}
-          </p>
-        </div>
-
-        {/* Cold-Press Myths */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-          <h2 className="text-base font-semibold text-yellow-700 mb-3">
-            You’re on cold-pressed oil—nice! But beware: not all cold-pressed oils are created equal.
-          </h2>
-          <div className="flex justify-between gap-2 mb-3">
-            {Object.keys(myths).map((key) => (
-              <button
-                key={key}
-                onClick={() => setActiveMyth(key)}
-                className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
-                  activeMyth === key
-                    ? 'bg-yellow-100 border-yellow-300'
-                    : 'bg-white border-gray-200 hover:border-yellow-300'
-                }`}
-              >
-                <img
-                  src={myths[key].image}
-                  alt={myths[key].title}
-                  className="h-16 mb-2 object-contain"
-                />
-                <span className="text-xs font-medium text-yellow-700 text-center">
-                  {myths[key].title}
-                </span>
-              </button>
-            ))}
-          </div>
-          <p className="text-xs text-gray-600 text-center">
-            {myths[activeMyth].description}
           </p>
         </div>
 
