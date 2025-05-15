@@ -55,7 +55,9 @@ export default function FinalReport({
 
   const buildFastrrUrl = (items) => {
     const base = 'https://trueharvest.store/';
-    const productParam = items.map((item) => `${item.id}:${item.quantity}`).join(',');
+    const productParam = items
+      .map((item) => `${item.id}:${item.quantity}`)
+      .join(',');
     return `${base}?isFastrrProduct=true&fastrr_link_type=CHECKOUT_LINK&seller-domain=trueharvest.store&products=${encodeURIComponent(
       productParam
     )}`;
@@ -67,7 +69,10 @@ export default function FinalReport({
     if (delta === -1 && currentQty === 1) return; // Prevent removal at 1
 
     newSummary[index].quantity += delta;
-    const newTotal = newSummary.reduce((acc, item) => acc + item.quantity * item.price, 0);
+    const newTotal = newSummary.reduce(
+      (acc, item) => acc + item.quantity * item.price,
+      0
+    );
 
     setSummary(newSummary);
     setTotalPrice(newTotal);
@@ -133,6 +138,56 @@ export default function FinalReport({
           </p>
         </div>
 
+        {/* Recommendations list */}
+        <div className="space-y-3 overflow-auto">
+          <h2 className="text-base font-semibold text-gray-800">
+            Your Oil Plan for the Next 30 Days
+          </h2>
+          {summary.map((item, index) => (
+            <div
+              key={index}
+              className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm"
+            >
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-14 h-14 object-cover rounded-md border mr-3"
+              />
+              <div className="flex-1">
+                <p className="text-gray-800 font-medium text-sm mb-1">
+                  {item.title}
+                </p>
+                <p className="text-gray-500 text-xs">
+                  ₹{item.price.toFixed(2)} × {item.quantity}
+                </p>
+                <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
+                  {getBadgeText(item.title)}
+                </div>
+              </div>
+              <div className="flex flex-col items-end">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => updateQuantity(index, -1)}
+                    className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100 focus:outline-none"
+                  >
+                    −
+                  </button>
+                  <span className="text-sm font-medium">{item.quantity}</span>
+                  <button
+                    onClick={() => updateQuantity(index, 1)}
+                    className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100 focus:outline-none"
+                  >
+                    +
+                  </button>
+                </div>
+                <div className="text-green-700 font-semibold text-sm mt-1">
+                  ₹{(item.quantity * item.price).toFixed(2)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* What makes our oils different */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-4">
           <h2 className="text-base font-semibold text-green-700 mb-3">
@@ -163,54 +218,6 @@ export default function FinalReport({
           <p className="text-xs text-gray-600 text-center">
             {features[activeFeature].description}
           </p>
-        </div>
-
-        {/* Recommendations list */}
-        <div className="space-y-3 overflow-auto">
-          <h2 className="text-base font-semibold text-gray-800">
-            Your Oil Plan for the Next 30 Days
-          </h2>
-          {summary.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm"
-            >
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-14 h-14 object-cover rounded-md border mr-3"
-              />
-              <div className="flex-1">
-                <p className="text-gray-800 font-medium text-sm mb-1">{item.title}</p>
-                <p className="text-gray-500 text-xs">
-                  ₹{item.price.toFixed(2)} × {item.quantity}
-                </p>
-                <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
-                  {getBadgeText(item.title)}
-                </div>
-              </div>
-              <div className="flex flex-col items-end">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => updateQuantity(index, -1)}
-                    className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 text-base flex items-center justify-center hover:bg-gray-100 focus:outline-none"
-                  >
-                    −
-                  </button>
-                  <span className="text-sm font-medium">{item.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(index, 1)}
-                    className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 text-base flex items-center justify-center hover:bg-gray-100 focus:outline-none"
-                  >
-                    +
-                  </button>
-                </div>
-                <div className="text-green-700 font-semibold text-sm mt-1">
-                  ₹{(item.quantity * item.price).toFixed(2)}
-                </div>
-              </div>
-            </div>
-          ))}
         </div>
 
         {/* Sticky footer */}
