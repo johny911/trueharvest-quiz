@@ -5,7 +5,8 @@ import { supabase } from '../supabaseClient';
 export default function FinalReport({
   formData,
   summary: initialSummary,
-  totalPrice: initialTotalPrice
+  totalPrice: initialTotalPrice,
+  cartUrl
 }) {
   const [activeTab, setActiveTab] = useState('inflammation');
   const [activeFeature, setActiveFeature] = useState('stone');
@@ -83,14 +84,6 @@ export default function FinalReport({
     }
   };
 
-  const buildFastrrUrl = (items) => {
-    const base = 'https://trueharvest.store/';
-    const productParam = items.map((i) => `${i.id}:${i.quantity}`).join(',');
-    return `${base}?isFastrrProduct=true&fastrr_link_type=CHECKOUT_LINK&seller-domain=trueharvest.store&products=${encodeURIComponent(
-      productParam
-    )}`;
-  };
-
   const updateQuantity = async (index, delta) => {
     const newSummary = [...summary];
     const currentQty = newSummary[index].quantity;
@@ -120,8 +113,6 @@ export default function FinalReport({
     return 'GMO Free';
   };
 
-  const fastrrUrl = buildFastrrUrl(summary);
-
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 flex flex-col space-y-6">
@@ -137,7 +128,6 @@ export default function FinalReport({
 
         {/* Conditional section */}
         {!formData.usesColdPressed ? (
-          /* Show refined-oil warning if user does NOT use cold-pressed yet */
           <div className="bg-red-50 border border-red-200 rounded-xl p-4">
             <h2 className="text-base font-semibold text-red-700 mb-3">
               The refined oil you’re using could be causing:
@@ -169,7 +159,6 @@ export default function FinalReport({
             </p>
           </div>
         ) : (
-          /* Show cold-press myths if user already uses cold-pressed */
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
             <h2 className="text-base font-semibold text-yellow-700 mb-3">
               You’re on cold-pressed oil—nice! But beware: not all cold-pressed oils are created equal.
@@ -264,6 +253,7 @@ export default function FinalReport({
           </h2>
           <div className="flex justify-between gap-2 mb-3">
             {Object.keys(features).map((key) => (
+
               <button
                 key={key}
                 onClick={() => setActiveFeature(key)}
@@ -306,7 +296,7 @@ export default function FinalReport({
             </div>
           </div>
           <a
-            href={fastrrUrl}
+            href={cartUrl}
             className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition mt-3"
           >
             Buy Now
