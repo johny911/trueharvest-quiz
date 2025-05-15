@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import React, { useState, useEffect } from 'react'
+import { supabase } from '../supabaseClient'
 
 export default function FinalReport({
   formData,
   summary: initialSummary,
   totalPrice: initialTotalPrice
 }) {
-  const [activeTab, setActiveTab] = useState('inflammation');
-  const [activeFeature, setActiveFeature] = useState('stone');
-  const [summary, setSummary] = useState(initialSummary);
-  const [totalPrice, setTotalPrice] = useState(initialTotalPrice);
+  const [activeTab, setActiveTab] = useState('inflammation')
+  const [activeFeature, setActiveFeature] = useState('stone')
+  const [summary, setSummary] = useState(initialSummary)
+  const [totalPrice, setTotalPrice] = useState(initialTotalPrice)
 
-  // Calculate the original total (compare-at prices)
+  // Compute original total (using compareAtPrice where available)
   const originalTotal = summary.reduce(
-    (acc, item) => acc + (item.compareAtPrice ?? item.price) * item.quantity,
+    (acc, item) =>
+      acc + (item.compareAtPrice ?? item.price) * item.quantity,
     0
-  );
+  )
 
   const warnings = {
     inflammation: {
@@ -36,7 +37,7 @@ export default function FinalReport({
       description:
         'Refined oils impair insulin sensitivity and increase the risk of developing diabetes.'
     }
-  };
+  }
 
   const features = {
     stone: {
@@ -57,55 +58,57 @@ export default function FinalReport({
       description:
         'We use native, non-GMO seeds for pure, unadulterated flavor and nutrition.'
     }
-  };
+  }
 
   const buildFastrrUrl = (items) => {
-    const base = 'https://trueharvest.store/';
-    const productParam = items.map((item) => `${item.id}:${item.quantity}`).join(',');
+    const base = 'https://trueharvest.store/'
+    const productParam = items.map((i) => `${i.id}:${i.quantity}`).join(',')
     return `${base}?isFastrrProduct=true&fastrr_link_type=CHECKOUT_LINK&seller-domain=trueharvest.store&products=${encodeURIComponent(
       productParam
-    )}`;
-  };
+    )}`
+  }
 
   const updateQuantity = async (index, delta) => {
-    const newSummary = [...summary];
-    const currentQty = newSummary[index].quantity;
-    if (delta === -1 && currentQty === 1) return;
+    const newSummary = [...summary]
+    const currentQty = newSummary[index].quantity
+    if (delta === -1 && currentQty === 1) return
 
-    newSummary[index].quantity += delta;
+    newSummary[index].quantity += delta
     const newTotal = newSummary.reduce(
       (acc, item) => acc + item.quantity * item.price,
       0
-    );
-
-    setSummary(newSummary);
-    setTotalPrice(newTotal);
+    )
+    setSummary(newSummary)
+    setTotalPrice(newTotal)
 
     await supabase
       .from('quiz_responses')
       .update({
-        recommended_oils: newSummary.map((item) => `${item.title} - ${item.quantity}L`)
+        recommended_oils: newSummary.map(
+          (item) => `${item.title} - ${item.quantity}L`
+        )
       })
-      .eq('phone', formData.phone);
-  };
+      .eq('phone', formData.phone)
+  }
 
   const getBadgeText = (title) => {
-    const lower = title.toLowerCase();
-    if (lower.includes('sesame')) return 'Molasses Free';
-    if (lower.includes('coconut')) return 'Sulfur Free Copra';
-    if (lower.includes('groundnut')) return 'Heirloom Groundnut';
-    return 'GMO Free';
-  };
+    const l = title.toLowerCase()
+    if (l.includes('sesame')) return 'Molasses Free'
+    if (l.includes('coconut')) return 'Sulfur Free Copra'
+    if (l.includes('groundnut')) return 'Heirloom Groundnut'
+    return 'GMO Free'
+  }
 
-  const fastrrUrl = buildFastrrUrl(summary);
+  const fastrrUrl = buildFastrrUrl(summary)
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 flex flex-col space-y-6">
-
         {/* Greeting */}
         <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-bold text-gray-800">Hi {formData?.name},</h1>
+          <h1 className="text-2xl font-bold text-gray-800">
+            Hi {formData?.name},
+          </h1>
           <p className="text-sm text-gray-600">
             Based on your answers, here’s your personalized oil recommendation.
           </p>
@@ -148,50 +151,56 @@ export default function FinalReport({
           <h2 className="text-base font-semibold text-gray-800">
             Your Oil Plan for the Next 30 Days
           </h2>
-          {summary.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm"
-            >
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-14 h-14 object-cover rounded-md border mr-3"
-              />
-              <div className="flex-1">
-                <p className="text-gray-800 font-medium text-sm mb-1">
-                  {item.title}
-                </p>
-                {/* now shows the BEFORE-discount price */}
-                <p className="text-sm text-gray-500">
-                  ₹{(item.compareAtPrice ?? item.price).toFixed(2)} × {item.quantity}
-                </p>
-                <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
-                  {getBadgeText(item.title)}
+          {summary.map((item, idx) => {
+            const unit = item.compareAtPrice ?? item.price
+            return (
+              <div
+                key={idx}
+                className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm"
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-14 h-14 object-cover rounded-md border mr-3"
+                />
+                <div className="flex-1">
+                  <p className="text-gray-800 font-medium text-sm mb-1">
+                    {item.title}
+                  </p>
+                  {/* show ONLY the before-discount price */}
+                  <p className="text-sm text-gray-500">
+                    ₹{unit.toFixed(2)} × {item.quantity}
+                  </p>
+                  <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
+                    {getBadgeText(item.title)}
+                  </div>
+                </div>
+                <div className="flex flex-col items-end">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => updateQuantity(idx, -1)}
+                      className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100"
+                    >
+                      −
+                    </button>
+                    <span className="text-sm font-medium">
+                      {item.quantity}
+                    </span>
+                    <button
+                      onClick={() => updateQuantity(idx, 1)}
+                      className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100"
+                    >
+                      +
+                    </button>
+                  </div>
+                  {/* per-item total also uses the before-discount price */}
+                  <div className="text-green-700 font-semibold text-sm mt-1">
+                    ₹{(unit * item.quantity).toFixed(2)}
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col items-end">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => updateQuantity(index, -1)}
-                    className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100 focus:outline-none"
-                  >
-                    −
-                  </button>
-                  <span className="text-sm font-medium">{item.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(index, 1)}
-                    className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100 focus:outline-none"
-                  >
-                    +
-                  </button>
-                </div>
-                <div className="text-green-700 font-semibold text-sm mt-1">
-                  ₹{(item.quantity * item.price).toFixed(2)}
-                </div>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {/* What makes our oils different? */}
@@ -231,7 +240,9 @@ export default function FinalReport({
           <div className="flex justify-between pt-2 border-t text-base font-semibold text-gray-800">
             <span>Total</span>
             <span>
-              <span className="line-through mr-2">₹{originalTotal.toFixed(2)}</span>
+              <span className="line-through mr-2">
+                ₹{originalTotal.toFixed(2)}
+              </span>
               ₹{totalPrice.toFixed(2)}
             </span>
           </div>
@@ -247,5 +258,5 @@ export default function FinalReport({
         </div>
       </div>
     </div>
-  );
+  )
 }
