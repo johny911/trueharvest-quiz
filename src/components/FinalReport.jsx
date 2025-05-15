@@ -8,6 +8,7 @@ export default function FinalReport({
 }) {
   const [activeTab, setActiveTab] = useState('inflammation');
   const [activeFeature, setActiveFeature] = useState('stone');
+  const [activeMyth, setActiveMyth] = useState('heat');
   const [summary, setSummary] = useState(initialSummary);
   const [totalPrice, setTotalPrice] = useState(initialTotalPrice);
 
@@ -50,13 +51,34 @@ export default function FinalReport({
       image: '/images/sunlight-dried.png',
       title: 'Sunlight Dried',
       description:
-        'Our oil is sedimented under the sun for 10 days—no filtration—so you get all the goodness.'
+        'Our oil settles naturally under the sun for 10 days—no filtration—so you get all the goodness.'
     },
     heirloom: {
       image: '/images/heirloom-seeds.png',
       title: 'Heirloom Seeds',
       description:
         'We use native, non-GMO seeds for pure, unadulterated flavor and nutrition.'
+    }
+  };
+
+  const myths = {
+    heat: {
+      image: '/images/heat-hype.png',
+      title: 'Heat & Hype',
+      description:
+        'Big factories push “cold-pressed” oil through giant machines at high speed. That friction heats it, destroying delicate nutrients—so it’s almost as “dead” as refined oil.'
+    },
+    stripped: {
+      image: '/images/stripped-of-goodness.png',
+      title: 'Stripped of Goodness',
+      description:
+        'Real cold-pressed oil settles naturally in sunlight, keeping all its vitamins and antioxidants. Commercial brands force-filter their batches in minutes, washing away the very nutrients you paid for.'
+    },
+    whiteLabel: {
+      image: '/images/white-label-deception.png',
+      title: 'White-Label Deception',
+      description:
+        'Many popular “cold-pressed” oils are actually mass-produced white-label products—you never know if it’s genuine or just re-branded factory output.'
     }
   };
 
@@ -72,7 +94,6 @@ export default function FinalReport({
     const newSummary = [...summary];
     const currentQty = newSummary[index].quantity;
     if (delta === -1 && currentQty === 1) return;
-
     newSummary[index].quantity += delta;
     const newTotal = newSummary.reduce(
       (acc, item) => acc + item.quantity * item.price,
@@ -80,7 +101,6 @@ export default function FinalReport({
     );
     setSummary(newSummary);
     setTotalPrice(newTotal);
-
     await supabase
       .from('quiz_responses')
       .update({
@@ -167,7 +187,6 @@ export default function FinalReport({
                   <p className="text-gray-800 font-medium text-sm mb-1">
                     {item.title}
                   </p>
-                  {/* show ONLY the before-discount price */}
                   <p className="text-sm text-gray-500">
                     ₹{unit.toFixed(2)} × {item.quantity}
                   </p>
@@ -215,7 +234,7 @@ export default function FinalReport({
                 className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
                   activeFeature === key
                     ? 'bg-green-100 border-green-300'
-                    : 'bg-white border-gray-200 hover:border-green-300' 
+                    : 'bg-white border-gray-200 hover:border-green-300'
                 }`}
               >
                 <img
@@ -231,6 +250,38 @@ export default function FinalReport({
           </div>
           <p className="text-xs text-gray-600 text-center">
             {features[activeFeature].description}
+          </p>
+        </div>
+
+        {/* Cold-Press Myths */}
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <h2 className="text-base font-semibold text-yellow-700 mb-3">
+            Cold-Press Myths
+          </h2>
+          <div className="flex justify-between gap-2 mb-3">
+            {Object.keys(myths).map((key) => (
+              <button
+                key={key}
+                onClick={() => setActiveMyth(key)}
+                className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
+                  activeMyth === key
+                    ? 'bg-yellow-100 border-yellow-300'
+                    : 'bg-white border-gray-200 hover:border-yellow-300'
+                }`}
+              >
+                <img
+                  src={myths[key].image}
+                  alt={myths[key].title}
+                  className="h-16 mb-2 object-contain"
+                />
+                <span className="text-xs font-medium text-yellow-700 text-center">
+                  {myths[key].title}
+                </span>
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-gray-600 text-center">
+            {myths[activeMyth].description}
           </p>
         </div>
 
