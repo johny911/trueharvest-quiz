@@ -1,91 +1,82 @@
-// src/utils/recommendOils.jsx
+// src/utils/recommendOils.js
 export default function recommendOils({ adults, kids, currentOils }) {
-  const total = adults * 1 + kids * 0.5;
+  // 1. Compute baseline in liters
+  const baseline = adults * 1 + kids * 0.5;
 
-  // Normalize their selections into the 3 available oils
-  const hasGroundnut =
-    currentOils.includes('Refined Groundnut Oil') ||
-    currentOils.includes('Cold-Pressed Groundnut Oil') ||
-    currentOils.includes('Refined Sunflower Oil') || // treated as groundnut
-    currentOils.includes('Cold-Pressed Mustard Oil'); // treated as groundnut
-
-  const hasCoconut =
-    currentOils.includes('Refined Coconut Oil') ||
-    currentOils.includes('Cold-Pressed Coconut Oil');
-
-  const hasSesame =
-    currentOils.includes('Refined Sesame Oil') ||
-    currentOils.includes('Cold-Pressed Sesame Oil');
-
-  // Build list of oils to recommend
-  let oils = [];
-  if (hasGroundnut) oils.push('Groundnut Oil');
-  if (hasCoconut) oils.push('Coconut Oil');
-  if (hasSesame) oils.push('Sesame Oil');
-
-  // Fallback if nothing matched
-  if (oils.length === 0) {
-    oils = ['Groundnut Oil', 'Coconut Oil'];
-  }
-
-  const recs = [];
-
-  if (oils.length === 1) {
-    // 100% of their need in that one oil
-    recs.push({
-      name: oils[0],
-      quantity: Math.ceil(total)
-    });
-  } else if (oils.length === 2) {
-    const [A, B] = oils;
-    let ratioA, ratioB;
-
-    // If the pair is Coconut+Sesame → put more into Sesame
-    if (
-      (A === 'Coconut Oil' && B === 'Sesame Oil') ||
-      (A === 'Sesame Oil' && B === 'Coconut Oil')
+  // 2. Map their selections to the three products
+  const choices = new Set();
+  currentOils.forEach(oil => {
+    const lower = oil.toLowerCase();
+    if (lower.includes('coconut')) {
+      choices.add('Coconut Oil');
+    } else if (lower.includes('sesame')) {
+      choices.add('Sesame Oil');
+    } else if (
+      lower.includes('groundnut') ||
+      lower.includes('sunflower') ||
+      lower.includes('mustard')
     ) {
-      if (A === 'Sesame Oil') {
-        ratioA = 0.6;
-        ratioB = 0.4;
-      } else {
-        ratioA = 0.4;
-        ratioB = 0.6;
-      }
-    } else {
-      // Otherwise Groundnut is primary (75/25)
-      if (A === 'Groundnut Oil') {
-        ratioA = 0.75;
-        ratioB = 0.25;
-      } else {
-        ratioA = 0.25;
-        ratioB = 0.75;
-      }
+      choices.add('Groundnut Oil');
     }
+  });
 
-    recs.push({
-      name: A,
-      quantity: Math.ceil(total * ratioA)
-    });
-    recs.push({
-      name: B,
-      quantity: Math.ceil(total * ratioB)
-    });
-  } else {
-    // All three: Groundnut 50%, Coconut 30%, Sesame 20%
-    recs.push({
-      name: 'Groundnut Oil',
-      quantity: Math.ceil(total * 0.5)
-    });
-    recs.push({
-      name: 'Coconut Oil',
-      quantity: Math.ceil(total * 0.3)
-    });
-    recs.push({
-      name: 'Sesame Oil',
-      quantity: Math.ceil(total * 0.2)
-    });
+  // 3. Fallback to original logic if they picked none
+  const usesRefined = currentOils.some(oil =>
+    ['refined groundnut oil','refined sunflower oil','palm oil']
+      .includes(oil.toLowerCase())
+  );
+  const usesCold = currentOils.includes('Cold-Pressed Oil');
+  if (choices.size === 0) {
+    return (usesRefined || !usesCold)
+      ? [ { name: 'Groundnut Oil', quantity: Math.ceil(baseline * 0.75 * 2) / 2 },
+          { name: 'Coconut Oil',  quantity: Math.ceil(baseline * 0.25 * 2) / 2 } ]
+      : [ { name: 'Sesame Oil',   quantity: Math.ceil(baseline * 0.5 * 2) / 2 },
+          { name: 'Groundnut Oil',quantity: Math.ceil(baseline * 0.5 * 2) / 2 } ];
   }
 
-  return recs;
+  const out = [];
+
+  // 4. If they picked all three, give 0.5L each
+  if (choices.size === 3) {
+    return Array.from(choices).map(name => ({ name, quantity: 0.5 }));
+  }
+
+  // 5. If only one choice, give them the full baseline
+  if (choices.size === 1) {
+    const [name] = choices;
+    return [{ name, quantity: Math.ceil(baseline * 2) / 2 }];
+  }
+
+  // 6. If exactly two choices, weight 60/40 towards the “primary” oil
+  //    Primary: Groundnut > Sesame > Coconut
+  const pick = Array.from(choices);
+  let primary, secondary;
+  if (pick.includes('Groundnut Oil')) {
+    primary = 'Groundnut Oil';
+    secondary = pick.find(n => n !== primary);
+  } else if (pick.includes('Sesame Oil')) {
+    primary = 'Sesame Oil';
+    secondary = pick.find(n => n !== primary);
+  } else {
+    // only coconut + something else
+    primary = pick[0];
+    secondary = pick[1];
+  }
+
+  const primaryShare   = baseline * 0.6;
+  const secondaryShare = baseline * 0.4;
+  // round each down to nearest 0.5L
+  let pQty = Math.floor(primaryShare * 2) / 2;
+  let sQty = Math.floor(secondaryShare * 2) / 2;
+
+  // if rounding down left us under baseline, add a single extra 0.5 to the primary
+  const sum = pQty + sQty;
+  if (sum < baseline) {
+    pQty += 0.5;
+  }
+
+  return [
+    { name: primary,   quantity: pQty },
+    { name: secondary, quantity: sQty }
+  ];
 }
