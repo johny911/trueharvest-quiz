@@ -4,17 +4,25 @@ import { supabase } from '../supabaseClient';
 import recommendOils from '../utils/recommendOils';
 import FinalReport from './FinalReport';
 
-const variantInfo = {
-  '40442863222856': { handle: 'wood-pressed-groundnut-oil' },
-  '40442863255624': { handle: 'wood-pressed-groundnut-oil' },
-  '40442862862408': { handle: 'wood-pressed-coconut-oil' },
-  '40442862895176': { handle: 'wood-pressed-coconut-oil' },
-  '40454636568648': { handle: 'wood-pressed-sesame-oil' },
-  '40454636601416': { handle: 'wood-pressed-sesame-oil' },
+const VARIANT_MAP = {
+  'Groundnut Oil': {
+    handle: 'wood-pressed-groundnut-oil',
+    '1L': '40442863222856',
+    '500ml': '40442863255624',
+  },
+  'Coconut Oil': {
+    handle: 'wood-pressed-coconut-oil',
+    '1L': '40442862862408',
+    '500ml': '40442862895176',
+  },
+  'Sesame Oil': {
+    handle: 'wood-pressed-sesame-oil',
+    '1L': '40454636568648',
+    '500ml': '40454636601416',
+  },
 };
 
-export default function Step6Recommendation({ formData, prevStep }) {
-  const [recommendations, setRecommendations] = useState([]);
+export default function Step6Recommendation({ formData }) {
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const [summary, setSummary] = useState([]);
@@ -22,46 +30,36 @@ export default function Step6Recommendation({ formData, prevStep }) {
   const [cartUrl, setCartUrl] = useState('');
 
   useEffect(() => {
-    preloadIllustrations();
+    // preload icons
+    ['/images/inflammation.png','/images/heart.png','/images/insulin.png']
+      .forEach(src => { const img = new Image(); img.src = src; });
+
     const recs = recommendOils(formData);
-    setRecommendations(recs);
     fetchPricesAndBuildSummary(recs);
     submitToSupabase(recs);
   }, []);
-
-  const preloadIllustrations = () => {
-    ['/images/inflammation.png', '/images/heart.png', '/images/insulin.png']
-      .forEach(src => {
-        const img = new Image();
-        img.src = src;
-      });
-  };
 
   const fetchPricesAndBuildSummary = async (recs) => {
     let total = 0;
 
     const items = await Promise.all(
       recs.map(async ({ name, quantity }) => {
-        const variantId = quantity >= 1
-          ? getVariantId(name, '1L')
-          : getVariantId(name, '500ml');
-        const handle = variantInfo[variantId].handle;
+        const sizeKey = quantity >= 1 ? '1L' : '500ml';
+        const { handle, ...variants } = VARIANT_MAP[name];
+        const variantId = variants[sizeKey];
 
         const res = await fetch(`https://trueharvest.store/products/${handle}.js`);
         const data = await res.json();
-        const variant = data.variants.find(v => v.id == variantId);
+        const variant = data.variants.find(v => v.id.toString() === variantId);
 
         const qty = Math.max(Math.round(quantity), 1);
         const price = parseFloat(variant.price) / 100;
-        const compareAtPrice = variant.compare_at_price
-          ? parseFloat(variant.compare_at_price) / 100
-          : price;
         total += qty * price;
 
         const image =
-          variant?.featured_image?.src ||
-          data.images?.[0]?.src ||
-          `https://trueharvest.store/products/${handle}.jpg`;
+          variant.featured_image?.src ||
+          data.images?.[0] ||
+          '';
 
         return {
           id: variantId,
@@ -69,37 +67,20 @@ export default function Step6Recommendation({ formData, prevStep }) {
           image,
           quantity: qty,
           price,
-          compareAtPrice,
+          compareAtPrice: variant.compare_at_price
+            ? parseFloat(variant.compare_at_price) / 100
+            : price,
         };
       })
     );
 
     setSummary(items);
     setTotalPrice(total);
-    setCartUrl(buildCartUrl(items));
-    setLoading(false);
-  };
-
-  const getVariantId = (name, volume) => {
-    const lower = name.toLowerCase();
-    const volumeText = volume.toLowerCase();
-    for (const [id, info] of Object.entries(variantInfo)) {
-      if (
-        info.handle.includes(lower.replace(' oil', '').replace(/\s/g, '-')) &&
-        id.includes(volumeText === '1l' ? '22856' : '55624')
-      ) {
-        return id;
-      }
-    }
-    return Object.keys(variantInfo).find(id =>
-      variantInfo[id].handle.includes(lower.replace(' oil', '').replace(/\s/g, '-')) &&
-      id.includes(volumeText === '1l' ? '6' : '16')
+    setCartUrl(
+      'https://trueharvest.store/cart/' +
+      items.map(i => `${i.id}:${i.quantity}`).join(',')
     );
-  };
-
-  const buildCartUrl = (items) => {
-    const base = 'https://trueharvest.store/cart/';
-    return base + items.map(i => `${i.id}:${i.quantity}`).join(',');
+    setLoading(false);
   };
 
   const submitToSupabase = async (recommendedOils) => {
