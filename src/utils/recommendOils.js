@@ -41,7 +41,7 @@ export default function recommendOils({ adults, kids, currentOils }) {
     const [A, B] = oils;
     let ratioA, ratioB;
 
-    // Coconut+Sesame → more Sesame
+    // Coconut+Sesame → put more into Sesame
     if (
       (A === 'Coconut Oil' && B === 'Sesame Oil') ||
       (A === 'Sesame Oil'  && B === 'Coconut Oil')
@@ -52,7 +52,7 @@ export default function recommendOils({ adults, kids, currentOils }) {
         ratioA = 0.4; ratioB = 0.6;
       }
     } else {
-      // Otherwise Groundnut primary (75/25)
+      // Otherwise Groundnut is primary (75/25)
       if (A === 'Groundnut Oil') {
         ratioA = 0.75; ratioB = 0.25;
       } else {
