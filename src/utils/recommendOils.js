@@ -25,27 +25,21 @@ export default function recommendOils({ adults, kids, currentOils }) {
     oils = ['Groundnut Oil', 'Coconut Oil'];
   }
 
-  // Helper: enforce minimum 0.5L, otherwise ceil to integer
-  const adjustQty = (qty) => qty <= 0.5 ? 0.5 : Math.ceil(qty);
-
   const recs = [];
 
   if (oils.length === 1) {
     // 100% of their need in that one oil
     recs.push({
       name: oils[0],
-      quantity: adjustQty(total),
+      quantity: Math.ceil(total)
     });
-
   } else if (oils.length === 2) {
     const [A, B] = oils;
     let ratioA, ratioB;
 
     // Coconut+Sesame → more Sesame
-    if (
-      (A === 'Coconut Oil' && B === 'Sesame Oil') ||
-      (A === 'Sesame Oil'  && B === 'Coconut Oil')
-    ) {
+    if ( (A === 'Coconut Oil' && B === 'Sesame Oil') ||
+         (A === 'Sesame Oil'  && B === 'Coconut Oil') ) {
       if (A === 'Sesame Oil') {
         ratioA = 0.6; ratioB = 0.4;
       } else {
@@ -62,26 +56,25 @@ export default function recommendOils({ adults, kids, currentOils }) {
 
     recs.push({
       name: A,
-      quantity: adjustQty(total * ratioA),
+      quantity: Math.ceil(total * ratioA)
     });
     recs.push({
       name: B,
-      quantity: adjustQty(total * ratioB),
+      quantity: Math.ceil(total * ratioB)
     });
-
   } else {
-    // All three: Groundnut 50%, Coconut 30%, Sesame 20%
+    // All three: 50% GN, 30% C, 20% S
     recs.push({
       name: 'Groundnut Oil',
-      quantity: adjustQty(total * 0.5),
+      quantity: Math.ceil(total * 0.5)
     });
     recs.push({
       name: 'Coconut Oil',
-      quantity: adjustQty(total * 0.3),
+      quantity: Math.ceil(total * 0.3)
     });
     recs.push({
       name: 'Sesame Oil',
-      quantity: adjustQty(total * 0.2),
+      quantity: Math.ceil(total * 0.2)
     });
   }
 
