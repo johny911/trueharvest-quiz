@@ -94,8 +94,8 @@ export default function Step6Recommendation({ formData }) {
       recommended_oils: recommendedOils.map(r => `${r.name} - ${r.quantity}L`)
     });
 
-    // Add to Google Sheet
-    await fetch("https://script.google.com/macros/s/AKfycbz4X4BHT5oWB7Kw2RAwYGwjTtKIbCEjAjTf12zdGMhLPLqgbQUEyNxMOYKBqNFwCc1FCg/exec", {
+    // ✅ Google Sheets Logging
+    await fetch("https://script.google.com/macros/s/AKfycbyrBggkfknPLl7TYr0QCnDhiJNj_qJXLYkFCoVHXWaiRNiSJ6Cobvi-FCBihFzyk405cQ/exec", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
