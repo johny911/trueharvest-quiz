@@ -113,11 +113,21 @@ export default function FinalReport({
     return 'GMO Free';
   };
 
-  // 👉 Change is here: point to cartUrl directly
+  // Shopify “buy now” directly to cart URL
   const checkoutUrl = cartUrl;
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
+      {/* Start Over button */}
+      <div className="w-full max-w-2xl mx-auto mb-4 flex justify-end">
+        <a
+          href="/quiz"
+          className="text-sm text-gray-600 hover:text-gray-800"
+        >
+          Start Over
+        </a>
+      </div>
+
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 flex flex-col space-y-6">
         {/* Greeting */}
         <div className="space-y-1 text-center">
