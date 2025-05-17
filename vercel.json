@@ -1,12 +1,14 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": "vite",
-  "functions": {
-    "api/log-to-sheets.js": {
-      "runtime": "nodejs18.x"
+  "builds": [
+    {
+      "src": "api/log-to-sheets.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "dist/**",
+      "use": "@vercel/static"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/log-to-sheets",
