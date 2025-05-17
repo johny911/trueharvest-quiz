@@ -1,4 +1,4 @@
-// src/components/FinalReport.jsx
+-/ src/components/FinalReport.jsx
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 
@@ -99,7 +99,7 @@ export default function FinalReport({
       .from('quiz_responses')
       .update({
         recommended_oils: newSummary.map(
-          (item) => `${item.title} - ${item.quantity}L`
+          (item) => ${item.title} - ${item.quantity}L
         )
       })
       .eq('phone', formData.phone);
@@ -113,21 +113,11 @@ export default function FinalReport({
     return 'GMO Free';
   };
 
-  // Shopify “buy now” directly to cart URL
+  // 👉 Change is here: point to cartUrl directly
   const checkoutUrl = cartUrl;
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
-      {/* Start Over button */}
-      <div className="w-full max-w-2xl mx-auto mb-4 flex justify-end">
-        <a
-          href="/quiz"
-          className="text-sm text-gray-600 hover:text-gray-800"
-        >
-          Start Over
-        </a>
-      </div>
-
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 flex flex-col space-y-6">
         {/* Greeting */}
         <div className="space-y-1 text-center">
@@ -150,11 +140,11 @@ export default function FinalReport({
                 <button
                   key={key}
                   onClick={() => setActiveTab(key)}
-                  className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
+                  className={w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
                     activeTab === key
                       ? 'bg-red-100 border-red-300'
                       : 'bg-white border-gray-200 hover:border-red-400'
-                  }`}
+                  }}
                 >
                   <img
                     src={warnings[key].image}
@@ -181,11 +171,11 @@ export default function FinalReport({
                 <button
                   key={key}
                   onClick={() => setActiveMyth(key)}
-                  className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
+                  className={w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
                     activeMyth === key
                       ? 'bg-yellow-100 border-yellow-300'
                       : 'bg-white border-gray-200 hover:border-yellow-300'
-                  }`}
+                  }}
                 >
                   <img
                     src={myths[key].image}
@@ -269,11 +259,11 @@ export default function FinalReport({
               <button
                 key={key}
                 onClick={() => setActiveFeature(key)}
-                className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
+                className={w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
                   activeFeature === key
                     ? 'bg-green-100 border-green-300'
                     : 'bg-white border-gray-200 hover:border-green-300'
-                }`}
+                }}
               >
                 <img
                   src={features[key].image}
