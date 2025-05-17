@@ -94,23 +94,27 @@ export default function Step6Recommendation({ formData }) {
       recommended_oils: recommendedOils.map(r => `${r.name} - ${r.quantity}L`)
     });
 
-    // ✅ Google Sheets Logging
-    await fetch("https://script.google.com/macros/s/AKfycbyrBggkfknPLl7TYr0QCnDhiJNj_qJXLYkFCoVHXWaiRNiSJ6Cobvi-FCBihFzyk405cQ/exec", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        name: formData.name,
-        phone: formData.phone,
-        numAdults: formData.adults,
-        numChildren: formData.kids,
-        coldPressUser: formData.usesColdPressed ? "Yes" : "No",
-        oilChoices: formData.currentOils?.join(", "),
-        recommendation: recommendedOils.map(r => `${r.name} - ${r.quantity}L`).join(", "),
-        value: totalPrice
-      })
-    });
+    // Google Sheets logging — safely
+    try {
+      await fetch("https://script.google.com/macros/s/AKfycbyrBggkfknPLl7TYr0QCnDhiJNj_qJXLYkFCoVHXWaiRNiSJ6Cobvi-FCBihFzyk405cQ/exec", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          numAdults: formData.adults,
+          numChildren: formData.kids,
+          coldPressUser: formData.usesColdPressed ? "Yes" : "No",
+          oilChoices: formData.currentOils?.join(", "),
+          recommendation: recommendedOils.map(r => `${r.name} - ${r.quantity}L`).join(", "),
+          value: totalPrice
+        })
+      });
+    } catch (error) {
+      console.error("Google Sheets logging failed:", error);
+    }
 
     setSubmitted(true);
   };
