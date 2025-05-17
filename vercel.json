@@ -1,0 +1,13 @@
+{
+    "functions": {
+      "api/log-to-sheets.js": {
+        "runtime": "nodejs18.x"
+      }
+    },
+    "routes": [
+      {
+        "src": "/api/log-to-sheets",
+        "dest": "/api/log-to-sheets.js"
+      }
+    ]
+  }
