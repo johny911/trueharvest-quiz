@@ -93,6 +93,25 @@ export default function Step6Recommendation({ formData }) {
       current_oils: formData.currentOils,
       recommended_oils: recommendedOils.map(r => `${r.name} - ${r.quantity}L`)
     });
+
+    // Add to Google Sheet
+    await fetch("https://script.google.com/macros/s/AKfycbz4X4BHT5oWB7Kw2RAwYGwjTtKIbCEjAjTf12zdGMhLPLqgbQUEyNxMOYKBqNFwCc1FCg/exec", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        phone: formData.phone,
+        numAdults: formData.adults,
+        numChildren: formData.kids,
+        coldPressUser: formData.usesColdPressed ? "Yes" : "No",
+        oilChoices: formData.currentOils?.join(", "),
+        recommendation: recommendedOils.map(r => `${r.name} - ${r.quantity}L`).join(", "),
+        value: totalPrice
+      })
+    });
+
     setSubmitted(true);
   };
 
