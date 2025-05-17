@@ -30,7 +30,6 @@ export default function Step6Recommendation({ formData }) {
   const [cartUrl, setCartUrl] = useState('');
 
   useEffect(() => {
-    // preload icons
     ['/images/inflammation.png','/images/heart.png','/images/insulin.png']
       .forEach(src => { const img = new Image(); img.src = src; });
 
@@ -94,9 +93,11 @@ export default function Step6Recommendation({ formData }) {
       recommended_oils: recommendedOils.map(r => `${r.name} - ${r.quantity}L`)
     });
 
-    // Google Sheets logging — safely
+    // Google Sheets logging with debug
     try {
-      await fetch("https://script.google.com/macros/s/AKfycbyrBggkfknPLl7TYr0QCnDhiJNj_qJXLYkFCoVHXWaiRNiSJ6Cobvi-FCBihFzyk405cQ/exec", {
+      console.log("⏳ Logging to Google Sheets...");
+
+      const response = await fetch("https://script.google.com/macros/s/AKfycbyrBggkfknPLl7TYr0QCnDhiJNj_qJXLYkFCoVHXWaiRNiSJ6Cobvi-FCBihFzyk405cQ/exec", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -112,8 +113,11 @@ export default function Step6Recommendation({ formData }) {
           value: totalPrice
         })
       });
+
+      const result = await response.text();
+      console.log("✅ Google Sheets log result:", result);
     } catch (error) {
-      console.error("Google Sheets logging failed:", error);
+      console.error("❌ Google Sheets logging failed:", error);
     }
 
     setSubmitted(true);
