@@ -30,7 +30,6 @@ export default function Step6Recommendation({ formData }) {
   const [cartUrl, setCartUrl] = useState('');
 
   useEffect(() => {
-    // preload icons
     ['/images/inflammation.png','/images/heart.png','/images/insulin.png']
       .forEach(src => { const img = new Image(); img.src = src; });
 
@@ -84,6 +83,7 @@ export default function Step6Recommendation({ formData }) {
   };
 
   const submitToSupabase = async (recommendedOils) => {
+    // Submit to Supabase
     await supabase.from('quiz_responses').insert({
       name: formData.name,
       phone: formData.phone,
@@ -93,6 +93,25 @@ export default function Step6Recommendation({ formData }) {
       current_oils: formData.currentOils,
       recommended_oils: recommendedOils.map(r => `${r.name} - ${r.quantity}L`)
     });
+
+    // Submit to Google Sheets
+    await fetch("https://script.google.com/macros/s/AKfycbz4X4BHT5oWB7Kw2RAwYGwjTtKIbCEjAjTf12zdGMhLPLqgbQUEyNxMOYKBqNFwCc1FCg/exec", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        phone: formData.phone,
+        numAdults: formData.adults,
+        numChildren: formData.kids,
+        coldPressUser: formData.usesColdPressed ? "Yes" : "No",
+        oilChoices: formData.currentOils?.join(", "),
+        recommendation: recommendedOils.map(r => `${r.name} - ${r.quantity}L`).join(", "),
+        value: totalPrice
+      })
+    });
+
     setSubmitted(true);
   };
 
