@@ -93,11 +93,11 @@ export default function Step6Recommendation({ formData }) {
       recommended_oils: recommendedOils.map(r => `${r.name} - ${r.quantity}L`)
     });
 
-    // Google Sheets logging with debug
+    // ✅ Google Sheets logging via proxy
     try {
-      console.log("⏳ Logging to Google Sheets...");
+      console.log("⏳ Logging to Google Sheets via /api/log-to-sheets...");
 
-      const response = await fetch("https://script.google.com/macros/s/AKfycbyrBggkfknPLl7TYr0QCnDhiJNj_qJXLYkFCoVHXWaiRNiSJ6Cobvi-FCBihFzyk405cQ/exec", {
+      const response = await fetch("/api/log-to-sheets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
