@@ -213,16 +213,32 @@ export default function FinalReport({
               />
               <div className="flex-1">
                 <p className="text-gray-800 font-medium text-sm mb-1">{item.title}</p>
-                <p className="text-sm text-gray-500">₹{(item.compareAtPrice ?? item.price).toFixed(2)} × {item.quantity}</p>
-                <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">{getBadgeText(item.title)}</div>
+                <p className="text-sm text-gray-500">
+                  ₹{(item.compareAtPrice ?? item.price).toFixed(2)} × {item.quantity}
+                </p>
+                <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
+                  {getBadgeText(item.title)}
+                </div>
               </div>
               <div className="flex flex-col items-end">
                 <div className="flex items-center gap-2">
-                  <button onClick={() => updateQuantity(idx, -1)} className="w-7 h-7 border border-gray-300 bg-whiterounded-md text-gray-700 flex items-centerjustify-center hover:bg-gray-100">−</button>
+                  <button
+                    onClick={() => updateQuantity(idx, -1)}
+                    className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100"
+                  >
+                    −
+                  </button>
                   <span className="text-sm font-medium">{item.quantity}</span>
-                  <button onClick={() => updateQuantity(idx, 1)} className="w-7 h-7 border border-gray-300 bg-whiterounded-md text-gray-700 flex items-centerjustify-center hover:bg-gray-100">+</button>
+                  <button
+                    onClick={() => updateQuantity(idx, 1)}
+                    className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100"
+                  >
+                    +
+                  </button>
                 </div>
-                <div className="text-green-700 font-semibold text-sm mt-1">₹{((item.compareAtPrice ?? item.price) * item.quantity).toFixed(2)}</div>
+                <div className="text-green-700 font-semibold text-sm mt-1">
+                  ₹{((item.compareAtPrice ?? item.price) * item.quantity).toFixed(2)}
+                </div>
               </div>
             </div>
           ))}
@@ -233,29 +249,46 @@ export default function FinalReport({
           <h2 className="text-base font-semibold text-green-700 mb-3">What makes our oils different?</h2>
           <div className="flex justify-between gap-2 mb-3">
             {Object.keys(features).map((key) => (
-              <button key={key} onClick={() => setActiveFeature(key)} className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${activeFeature === key ? 'bg-green-100 border-green-300' : 'bg-white border-gray-200 hover:border-green-300'}`}>
+              <button
+                key={key}
+                onClick={() => setActiveFeature(key)}
+                className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
+                  activeFeature === key
+                    ? 'bg-green-100 border-green-300'
+                    : 'bg-white border-gray-200 hover:border-green-300'
+                }`}
+              >
                 <img
                   src={features[key].image}
                   alt={features[key].title}
                   className="h-16 mb-2 object-contain"
                 />
-                <span className="text-xs font-medium text-green-700 text-center">{features[key].title}</span>
+                <span className="text-xs font-medium text-green-700 text-center">
+                  {features[key].title}
+                </span>
               </button>
             ))}
           </div>
           <p className="text-xs text-gray-600 text-center">{features[activeFeature].description}</p>
         </div>
 
-        {/* Sticky footer */}
+        {/* Sticky footer */}  
         <div className="sticky bottom-0 bg-white pt-4">
           <div className="flex justify-between pt-2 border-t">
             <span className="text-base font-semibold text-gray-800">Total</span>
             <div className="flex flex-col items-end">
-              <span className="text-base font-semibold text-gray-800"><span className="line-through mr-2">₹{originalTotal.toFixed(2)}</span>₹{totalPrice.toFixed(2)}</span>
+              <span className="text-base font-semibold text-gray-800">
+                <span className="line-through mr-2">₹{originalTotal.toFixed(2)}</span>₹{totalPrice.toFixed(2)}
+              </span>
               <span className="text-xs text-gray-500">Inclusive of all taxes</span>
             </div>
           </div>
-          <a href={checkoutUrl} className="block w-full bg-green-600 hover:bg-green-700 text-whitefont-semibold py-3rounded-xl text-center transition mt-3">Buy Now</a>
+          <a
+            href={checkoutUrl}
+            className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition mt-3"
+          >
+            Buy Now
+          </a>
           <p className="text-center text-xs text-gray-400 mt-2">Make the switch. Your health deserves better.</p>
         </div>
       </div>
