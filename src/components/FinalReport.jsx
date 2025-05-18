@@ -113,17 +113,28 @@ export default function FinalReport({
     return 'GMO Free';
   };
 
-  // 👉 Change is here: point to cartUrl directly
-  const checkoutUrl = cartUrl;
+  // Dynamically rebuild the cart URL so it reflects any quantity changes
+  const checkoutUrl =
+    'https://trueharvest.store/cart/' +
+    summary.map((item) => `${item.id}:${item.quantity}`).join(',');
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start px-4 py-1">
+
+      {/* Start Over button above the white container */}
+      <div className="w-full max-w-2xl flex justify-end mb-2">
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-transparent text-blue-600 hover:underline text-sm"
+        >
+          Start Over
+        </button>
+      </div>
+
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 flex flex-col space-y-6">
         {/* Greeting */}
         <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-bold text-gray-800">
-            Hi {formData?.name},
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-800">Hi {formData?.name},</h1>
           <p className="text-sm text-gray-600">
             Based on your answers, here’s your personalized oil recommendation.
           </p>
@@ -199,54 +210,47 @@ export default function FinalReport({
           <h2 className="text-base font-semibold text-gray-800">
             Your Oil Plan for the Next 30 Days
           </h2>
-          {summary.map((item, idx) => {
-            const unit = item.compareAtPrice ?? item.price;
-            return (
-              <div
-                key={idx}
-                className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm"
-              >
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-14 h-14 object-cover rounded-md border mr-3"
-                />
-                <div className="flex-1">
-                  <p className="text-gray-800 font-medium text-sm mb-1">
-                    {item.title}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    ₹{unit.toFixed(2)} × {item.quantity}
-                  </p>
-                  <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
-                    {getBadgeText(item.title)}
-                  </div>
-                </div>
-                <div className="flex flex-col items-end">
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => updateQuantity(idx, -1)}
-                      className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100"
-                    >
-                      −
-                    </button>
-                    <span className="text-sm font-medium">
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() => updateQuantity(idx, 1)}
-                      className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <div className="text-green-700 font-semibold text-sm mt-1">
-                    ₹{(unit * item.quantity).toFixed(2)}
-                  </div>
+          {summary.map((item, idx) => (
+            <div
+              key={idx}
+              className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm"
+            >
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-14 h-14 object-cover rounded-md border mr-3"
+              />
+              <div className="flex-1">
+                <p className="text-gray-800 font-medium text-sm mb-1">{item.title}</p>
+                <p className="text-sm text-gray-500">
+                  ₹{(item.compareAtPrice ?? item.price).toFixed(2)} × {item.quantity}
+                </p>
+                <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
+                  {getBadgeText(item.title)}
                 </div>
               </div>
-            );
-          })}
+              <div className="flex flex-col items-end">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => updateQuantity(idx, -1)}
+                    className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100"
+                  >
+                    −
+                  </button>
+                  <span className="text-sm font-medium">{item.quantity}</span>
+                  <button
+                    onClick={() => updateQuantity(idx, 1)}
+                    className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100"
+                  >
+                    +
+                  </button>
+                </div>
+                <div className="text-green-700 font-semibold text-sm mt-1">
+                  ₹{((item.compareAtPrice ?? item.price) * item.quantity).toFixed(2)}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* What makes our oils different? */}
@@ -287,14 +291,9 @@ export default function FinalReport({
             <span className="text-base font-semibold text-gray-800">Total</span>
             <div className="flex flex-col items-end">
               <span className="text-base font-semibold text-gray-800">
-                <span className="line-through mr-2">
-                  ₹{originalTotal.toFixed(2)}
-                </span>
-                ₹{totalPrice.toFixed(2)}
+                <span className="line-through mr-2">₹{originalTotal.toFixed(2)}</span>₹{totalPrice.toFixed(2)}
               </span>
-              <span className="text-xs text-gray-500">
-                Inclusive of all taxes
-              </span>
+              <span className="text-xs text-gray-500">Inclusive of all taxes</span>
             </div>
           </div>
           <a

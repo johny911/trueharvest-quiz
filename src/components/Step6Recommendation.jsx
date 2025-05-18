@@ -30,13 +30,24 @@ export default function Step6Recommendation({ formData }) {
   const [cartUrl, setCartUrl] = useState('');
 
   useEffect(() => {
-    // preload icons
-    ['/images/inflammation.png','/images/heart.png','/images/insulin.png']
-      .forEach(src => { const img = new Image(); img.src = src; });
+    // preload all relevant icons during loading
+    [
+      '/images/inflammation.png',
+      '/images/heart.png',
+      '/images/insulin.png',
+      '/images/stone-pressed.png',
+      '/images/sunlight-dried.png',
+      '/images/heirloom-seeds.png',
+      '/images/heat-hype.png',
+      '/images/stripped-of-goodness.png',
+      '/images/white-label-deception.png'
+    ].forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
 
     const recs = recommendOils(formData);
     fetchPricesAndBuildSummary(recs);
-    submitToSupabase(recs);
   }, []);
 
   const fetchPricesAndBuildSummary = async (recs) => {
@@ -81,9 +92,12 @@ export default function Step6Recommendation({ formData }) {
       items.map(i => `${i.id}:${i.quantity}`).join(',')
     );
     setLoading(false);
+
+    // submit once total is calculated
+    submitToSupabase(recs, total);
   };
 
-  const submitToSupabase = async (recommendedOils) => {
+  const submitToSupabase = async (recommendedOils, value) => {
     await supabase.from('quiz_responses').insert({
       name: formData.name,
       phone: formData.phone,
@@ -93,6 +107,21 @@ export default function Step6Recommendation({ formData }) {
       current_oils: formData.currentOils,
       recommended_oils: recommendedOils.map(r => `${r.name} - ${r.quantity}L`)
     });
+
+    const qs = new URLSearchParams({
+      name: formData.name,
+      phone: formData.phone,
+      numAdults: formData.adults,
+      numChildren: formData.kids,
+      coldPressUser: formData.usesColdPressed ? "Yes" : "No",
+      oilChoices: formData.currentOils?.join(", "),
+      recommendation: recommendedOils.map(r => `${r.name} - ${r.quantity}L`).join(", "),
+      value: value.toString()
+    }).toString();
+
+    new Image().src =
+      "https://script.google.com/macros/s/AKfycbw-atgx_I4x508IA5ms5wQ_cji2kgsdqpxsv-AM1EYU2tmR7e9nTTc606eXsO4TjqSi5w/exec?" + qs;
+
     setSubmitted(true);
   };
 
