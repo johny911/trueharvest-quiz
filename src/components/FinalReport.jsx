@@ -119,17 +119,6 @@ export default function FinalReport({
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 flex flex-col space-y-6">
-
-        {/* Start Over Button (top-right) */}
-        <div className="flex justify-end">
-          <button
-            onClick={() => window.location.reload()}
-            className="text-sm text-blue-600 hover:underline"
-          >
-            Start Over
-          </button>
-        </div>
-
         {/* Greeting */}
         <div className="space-y-1 text-center">
           <h1 className="text-2xl font-bold text-gray-800">
@@ -258,6 +247,7 @@ export default function FinalReport({
               </div>
             );
           })}
+        </div>
 
         {/* What makes our oils different? */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-4">
