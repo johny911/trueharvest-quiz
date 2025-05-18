@@ -16,8 +16,7 @@ export default function FinalReport({
 
   // Compute original total (using compareAtPrice where available)
   const originalTotal = summary.reduce(
-    (acc, item) =>
-      acc + (item.compareAtPrice ?? item.price) * item.quantity,
+    (acc, item) => acc + (item.compareAtPrice ?? item.price) * item.quantity,
     0
   );
 
@@ -113,17 +112,24 @@ export default function FinalReport({
     return 'GMO Free';
   };
 
-  // 👉 Change is here: point to cartUrl directly
   const checkoutUrl = cartUrl;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start px-4 py-8">
+      {/* Start Over button above the white container */}
+      <div className="w-full max-w-2xl flex justify-end mb-4">
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-transparent text-blue-600 hover:underline text-sm"
+        >
+          Start Over
+        </button>
+      </div>
+
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 flex flex-col space-y-6">
         {/* Greeting */}
         <div className="space-y-1 text-center">
-          <h1 className="text-2xl font-bold text-gray-800">
-            Hi {formData?.name},
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-800">Hi {formData?.name},</h1>
           <p className="text-sm text-gray-600">
             Based on your answers, here’s your personalized oil recommendation.
           </p>
@@ -196,53 +202,27 @@ export default function FinalReport({
 
         {/* Recommendations list */}
         <div className="space-y-3 overflow-auto">
-          <h2 className="text-base font-semibold text-gray-800">
-            Your Oil Plan for the Next 30 Days
-          </h2>
+          <h2 className="text-base font-semibold text-gray-800">Your Oil Plan for the Next 30 Days</h2>
           {summary.map((item, idx) => {
             const unit = item.compareAtPrice ?? item.price;
             return (
-              <div
-                key={idx}
-                className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm"
-              >
-                <img
+              <div key={idx} className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm">\n                <img
                   src={item.image}
                   alt={item.title}
                   className="w-14 h-14 object-cover rounded-md border mr-3"
                 />
                 <div className="flex-1">
-                  <p className="text-gray-800 font-medium text-sm mb-1">
-                    {item.title}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    ₹{unit.toFixed(2)} × {item.quantity}
-                  </p>
-                  <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">
-                    {getBadgeText(item.title)}
-                  </div>
+                  <p className="text-gray-800 font-medium text-sm mb-1">{item.title}</p>
+                  <p className="text-sm text-gray-500">₹{unit.toFixed(2)} × {item.quantity}</p>
+                  <div className="mt-2 inline-block text-[10px] bg-green-100 text-green-800 font-semibold px-2 py-1 rounded-md">{getBadgeText(item.title)}</div>
                 </div>
                 <div className="flex flex-col items-end">
                   <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => updateQuantity(idx, -1)}
-                      className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100"
-                    >
-                      −
-                    </button>
-                    <span className="text-sm font-medium">
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() => updateQuantity(idx, 1)}
-                      className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100"
-                    >
-                      +
-                    </button>
+                    <button onClick={() => updateQuantity(idx, -1)} className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100">−</button>
+                    <span className="text-sm font-medium">{item.quantity}</span>
+                    <button onClick={() => updateQuantity(idx, 1)} className="w-7 h-7 border border-gray-300 bg-white rounded-md text-gray-700 flex items-center justify-center hover:bg-gray-100">+</button>
                   </div>
-                  <div className="text-green-700 font-semibold text-sm mt-1">
-                    ₹{(unit * item.quantity).toFixed(2)}
-                  </div>
+                  <div className="text-green-700 font-semibold text-sm mt-1">₹{(unit * item.quantity).toFixed(2)}</div>
                 </div>
               </div>
             );
@@ -251,34 +231,22 @@ export default function FinalReport({
 
         {/* What makes our oils different? */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-          <h2 className="text-base font-semibold text-green-700 mb-3">
-            What makes our oils different?
-          </h2>
+          <h2 className="text-base font-semibold text-green-700 mb-3">What makes our oils different?</h2>
           <div className="flex justify-between gap-2 mb-3">
             {Object.keys(features).map((key) => (
-              <button
-                key={key}
-                onClick={() => setActiveFeature(key)}
-                className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
-                  activeFeature === key
-                    ? 'bg-green-100 border-green-300'
-                    : 'bg-white border-gray-200 hover:border-green-300'
-                }`}
-              >
+              <button key={key} onClick={() => setActiveFeature(key)} className={`w-1/3 rounded-xl p-2 border transition flex flex-col items-center ${
+                activeFeature === key ? 'bg-green-100 border-green-300' : 'bg-white border-gray-200 hover:border-green-300'
+              }`}>
                 <img
                   src={features[key].image}
                   alt={features[key].title}
                   className="h-16 mb-2 object-contain"
                 />
-                <span className="text-xs font-medium text-green-700 text-center">
-                  {features[key].title}
-                </span>
+                <span className="text-xs font-medium text-green-700 text-center">{features[key].title}</span>
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-600 text-center">
-            {features[activeFeature].description}
-          </p>
+          <p className="text-xs text-gray-600 text-center">{features[activeFeature].description}</p>
         </div>
 
         {/* Sticky footer */}
@@ -286,26 +254,12 @@ export default function FinalReport({
           <div className="flex justify-between pt-2 border-t">
             <span className="text-base font-semibold text-gray-800">Total</span>
             <div className="flex flex-col items-end">
-              <span className="text-base font-semibold text-gray-800">
-                <span className="line-through mr-2">
-                  ₹{originalTotal.toFixed(2)}
-                </span>
-                ₹{totalPrice.toFixed(2)}
-              </span>
-              <span className="text-xs text-gray-500">
-                Inclusive of all taxes
-              </span>
+              <span className="text-base font-semibold text-gray-800"><span className="line-through mr-2">₹{originalTotal.toFixed(2)}</span>₹{totalPrice.toFixed(2)}</span>
+              <span className="text-xs text-gray-500">Inclusive of all taxes</span>
             </div>
           </div>
-          <a
-            href={checkoutUrl}
-            className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition mt-3"
-          >
-            Buy Now
-          </a>
-          <p className="text-center text-xs text-gray-400 mt-2">
-            Make the switch. Your health deserves better.
-          </p>
+          <a href={checkoutUrl} className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition mt-3">Buy Now</a>
+          <p className="text-center text-xs text-gray-400 mt-2">Make the switch. Your health deserves better.</p>
         </div>
       </div>
     </div>
