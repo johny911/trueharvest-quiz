@@ -30,6 +30,7 @@ export default function Step6Recommendation({ formData }) {
   const [cartUrl, setCartUrl] = useState('');
 
   useEffect(() => {
+    // preload icons
     ['/images/inflammation.png','/images/heart.png','/images/insulin.png']
       .forEach(src => { const img = new Image(); img.src = src; });
 
@@ -83,6 +84,7 @@ export default function Step6Recommendation({ formData }) {
   };
 
   const submitToSupabase = async (recommendedOils) => {
+    // existing Supabase logging
     await supabase.from('quiz_responses').insert({
       name: formData.name,
       phone: formData.phone,
@@ -93,32 +95,20 @@ export default function Step6Recommendation({ formData }) {
       recommended_oils: recommendedOils.map(r => `${r.name} - ${r.quantity}L`)
     });
 
-    // ✅ Google Sheets logging via proxy
-    try {
-      console.log("⏳ Logging to Google Sheets via /api/log-to-sheets...");
-
-      const response = await fetch("/api/log-to-sheets", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          phone: formData.phone,
-          numAdults: formData.adults,
-          numChildren: formData.kids,
-          coldPressUser: formData.usesColdPressed ? "Yes" : "No",
-          oilChoices: formData.currentOils?.join(", "),
-          recommendation: recommendedOils.map(r => `${r.name} - ${r.quantity}L`).join(", "),
-          value: totalPrice
-        })
-      });
-
-      const result = await response.text();
-      console.log("✅ Google Sheets log result:", result);
-    } catch (error) {
-      console.error("❌ Google Sheets logging failed:", error);
-    }
+    // 📡 Google Sheets logging via image beacon (no CORS)
+    const qs = new URLSearchParams({
+      name: formData.name,
+      phone: formData.phone,
+      numAdults: formData.adults,
+      numChildren: formData.kids,
+      coldPressUser: formData.usesColdPressed ? "Yes" : "No",
+      oilChoices: formData.currentOils?.join(", "),
+      recommendation: recommendedOils.map(r => `${r.name} - ${r.quantity}L`).join(", "),
+      value: totalPrice
+    }).toString();
+    new Image().src = 
+      "https://script.google.com/macros/s/AKfycbw-atgx_I4x508IA5ms5wQ_cji2kgsdqpxsv-AM1EYU2tmR7e9nTTc606eXsO4TjqSi5w/exec?" 
+      + qs;
 
     setSubmitted(true);
   };
