@@ -16,7 +16,8 @@ export default function FinalReport({
 
   // Compute original total (using compareAtPrice where available)
   const originalTotal = summary.reduce(
-    (acc, item) => acc + (item.compareAtPrice ?? item.price) * item.quantity,
+    (acc, item) =>
+      acc + (item.compareAtPrice ?? item.price) * item.quantity,
     0
   );
 
@@ -112,7 +113,10 @@ export default function FinalReport({
     return 'GMO Free';
   };
 
-  const checkoutUrl = cartUrl;
+  // Dynamically rebuild the cart URL so it reflects any quantity changes
+  const checkoutUrl =
+    'https://trueharvest.store/cart/' +
+    summary.map((item) => `${item.id}:${item.quantity}`).join(',');
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start px-4 py-8">
@@ -203,9 +207,14 @@ export default function FinalReport({
 
         {/* Recommendations list */}
         <div className="space-y-3 overflow-auto">
-          <h2 className="text-base font-semibold text-gray-800">Your Oil Plan for the Next 30 Days</h2>
+          <h2 className="text-base font-semibold text-gray-800">
+            Your Oil Plan for the Next 30 Days
+          </h2>
           {summary.map((item, idx) => (
-            <div key={idx} className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm">
+            <div
+              key={idx}
+              className="flex items-center bg-gray-100 rounded-lg p-3 shadow-sm"
+            >
               <img
                 src={item.image}
                 alt={item.title}
@@ -246,7 +255,9 @@ export default function FinalReport({
 
         {/* What makes our oils different? */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-          <h2 className="text-base font-semibold text-green-700 mb-3">What makes our oils different?</h2>
+          <h2 className="text-base font-semibold text-green-700 mb-3">
+            What makes our oils different?
+          </h2>
           <div className="flex justify-between gap-2 mb-3">
             {Object.keys(features).map((key) => (
               <button
@@ -269,10 +280,12 @@ export default function FinalReport({
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-600 text-center">{features[activeFeature].description}</p>
+          <p className="text-xs text-gray-600 text-center">
+            {features[activeFeature].description}
+          </p>
         </div>
 
-        {/* Sticky footer */}  
+        {/* Sticky footer */}
         <div className="sticky bottom-0 bg-white pt-4">
           <div className="flex justify-between pt-2 border-t">
             <span className="text-base font-semibold text-gray-800">Total</span>
@@ -289,7 +302,9 @@ export default function FinalReport({
           >
             Buy Now
           </a>
-          <p className="text-center text-xs text-gray-400 mt-2">Make the switch. Your health deserves better.</p>
+          <p className="text-center text-xs text-gray-400 mt-2">
+            Make the switch. Your health deserves better.
+          </p>
         </div>
       </div>
     </div>
