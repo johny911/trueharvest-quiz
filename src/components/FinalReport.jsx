@@ -119,10 +119,10 @@ export default function FinalReport({
     summary.map((item) => `${item.id}:${item.quantity}`).join(',');
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start px-4 py-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start px-4 py-4">
 
       {/* Start Over button above the white container */}
-      <div className="w-full max-w-2xl flex justify-end mb-4">
+      <div className="w-full max-w-2xl flex justify-end mb-2">
         <button
           onClick={() => window.location.reload()}
           className="bg-transparent text-blue-600 hover:underline text-sm"
