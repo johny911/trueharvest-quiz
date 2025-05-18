@@ -30,13 +30,24 @@ export default function Step6Recommendation({ formData }) {
   const [cartUrl, setCartUrl] = useState('');
 
   useEffect(() => {
-    // preload icons
-    ['/images/inflammation.png','/images/heart.png','/images/insulin.png']
-      .forEach(src => { const img = new Image(); img.src = src; });
+    // preload all relevant icons during loading
+    [
+      '/images/inflammation.png',
+      '/images/heart.png',
+      '/images/insulin.png',
+      '/images/stone-pressed.png',
+      '/images/sunlight-dried.png',
+      '/images/heirloom-seeds.png',
+      '/images/heat-hype.png',
+      '/images/stripped-of-goodness.png',
+      '/images/white-label-deception.png'
+    ].forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
 
     const recs = recommendOils(formData);
     fetchPricesAndBuildSummary(recs);
-    // remove submitToSupabase(recs) from here
   }, []);
 
   const fetchPricesAndBuildSummary = async (recs) => {
@@ -82,13 +93,11 @@ export default function Step6Recommendation({ formData }) {
     );
     setLoading(false);
 
-    // now that total is known, submit both Supabase & Google Sheets
+    // submit once total is calculated
     submitToSupabase(recs, total);
   };
 
-  // accept the totalPrice as a parameter
   const submitToSupabase = async (recommendedOils, value) => {
-    // existing Supabase logging
     await supabase.from('quiz_responses').insert({
       name: formData.name,
       phone: formData.phone,
@@ -99,7 +108,6 @@ export default function Step6Recommendation({ formData }) {
       recommended_oils: recommendedOils.map(r => `${r.name} - ${r.quantity}L`)
     });
 
-    // image beacon GET to Apps Script
     const qs = new URLSearchParams({
       name: formData.name,
       phone: formData.phone,
@@ -108,12 +116,11 @@ export default function Step6Recommendation({ formData }) {
       coldPressUser: formData.usesColdPressed ? "Yes" : "No",
       oilChoices: formData.currentOils?.join(", "),
       recommendation: recommendedOils.map(r => `${r.name} - ${r.quantity}L`).join(", "),
-      value: value.toString()        // use the passed-in total
+      value: value.toString()
     }).toString();
 
     new Image().src =
-      "https://script.google.com/macros/s/AKfycbw-atgx_I4x508IA5ms5wQ_cji2kgsdqpxsv-AM1EYU2tmR7e9nTTc606eXsO4TjqSi5w/exec?"
-      + qs;
+      "https://script.google.com/macros/s/AKfycbw-atgx_I4x508IA5ms5wQ_cji2kgsdqpxsv-AM1EYU2tmR7e9nTTc606eXsO4TjqSi5w/exec?" + qs;
 
     setSubmitted(true);
   };
