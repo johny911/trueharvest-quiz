@@ -1,9 +1,10 @@
 // src/components/Step6Recommendation.jsx
 import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom/client';
+import html2pdf from 'html2pdf.js';
 import { supabase } from '../supabaseClient';
 import recommendOils from '../utils/recommendOils';
 import FinalReport from './FinalReport';
-import { PDFDocument, StandardFonts } from 'pdf-lib';   // PDF builder
 
 const VARIANT_MAP = {
   'Groundnut Oil': {
@@ -23,36 +24,43 @@ const VARIANT_MAP = {
   },
 };
 
-// helper: build a minimal PDF, upload to Supabase, return public URL
+// helper: render <FinalReport> invisibly → html2pdf → upload → return URL
 async function generatePdfAndUpload({ summary, formData, totalPrice }) {
-  const pdf  = await PDFDocument.create();
-  const page = pdf.addPage();
-  const font = await pdf.embedFont(StandardFonts.Helvetica);
+  // 1. mount FinalReport off-screen
+  const container = document.createElement('div');
+  container.style.position = 'fixed';
+  container.style.left = '-9999px';
+  document.body.appendChild(container);
 
-  // replace glyphs WinAnsi can’t encode (₹, ×, •)
-  const safe = (s) =>
-    s.replace(/₹/g, 'Rs')
-     .replace(/×/g, 'x')
-     .replace(/•/g, '-');
+  const root = ReactDOM.createRoot(container);
+  root.render(
+    <FinalReport
+      formData={formData}
+      summary={summary}
+      totalPrice={totalPrice}
+      cartUrl="#"
+    />
+  );
 
-  let y = page.getHeight() - 40;
+  // wait a tick for images/fonts
+  await new Promise((r) => setTimeout(r, 300));
 
-  page.drawText('True Harvest – Your Personal Oil Plan', { x: 50, y, size: 16, font });
-  y -= 25;
-  page.drawText(`Name: ${safe(formData.name)}`, { x: 50, y, size: 12, font });
-  y -= 20;
+  // 2. generate PDF (1080 px × auto, retina scale 2)
+  const blob = await html2pdf()
+    .set({
+      margin: 0,
+      filename: `quiz-${Date.now()}.pdf`,
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'px', format: [1080, 'auto'] },
+    })
+    .from(container)
+    .outputPdf('blob');
 
-  summary.forEach(item => {
-    page.drawText(`${safe('- ' + item.title)} x ${item.quantity}`, { x: 50, y, size: 12, font });
-    y -= 15;
-  });
+  // clean up DOM
+  root.unmount();
+  container.remove();
 
-  y -= 15;
-  page.drawText(`Estimated Total: Rs ${totalPrice.toFixed(2)}`, { x: 50, y, size: 12, font });
-
-  const pdfBytes = await pdf.save();
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-
+  // 3. upload to Supabase
   const path = `quiz-${Date.now()}.pdf`;
   const { data, error } = await supabase
     .storage
@@ -80,7 +88,7 @@ export default function Step6Recommendation({ formData }) {
   const [cartUrl, setCartUrl] = useState('');
 
   useEffect(() => {
-    // preload icons during loading
+    // preload icons
     [
       '/images/inflammation.png',
       '/images/heart.png',
@@ -90,8 +98,8 @@ export default function Step6Recommendation({ formData }) {
       '/images/heirloom-seeds.png',
       '/images/heat-hype.png',
       '/images/stripped-of-goodness.png',
-      '/images/white-label-deception.png'
-    ].forEach(src => {
+      '/images/white-label-deception.png',
+    ].forEach((src) => {
       const img = new Image();
       img.src = src;
     });
@@ -109,18 +117,19 @@ export default function Step6Recommendation({ formData }) {
         const { handle, ...variants } = VARIANT_MAP[name];
         const variantId = variants[sizeKey];
 
-        const res = await fetch(`https://trueharvest.store/products/${handle}.js`);
+        const res = await fetch(
+          `https://trueharvest.store/products/${handle}.js`
+        );
         const data = await res.json();
-        const variant = data.variants.find(v => v.id.toString() === variantId);
+        const variant = data.variants.find(
+          (v) => v.id.toString() === variantId
+        );
 
         const qty = Math.max(Math.round(quantity), 1);
         const price = parseFloat(variant.price) / 100;
         total += qty * price;
 
-        const image =
-          variant.featured_image?.src ||
-          data.images?.[0] ||
-          '';
+        const image = variant.featured_image?.src || data.images?.[0] || '';
 
         return {
           id: variantId,
@@ -139,10 +148,9 @@ export default function Step6Recommendation({ formData }) {
     setTotalPrice(total);
     setCartUrl(
       'https://trueharvest.store/cart/' +
-      items.map(i => `${i.id}:${i.quantity}`).join(',')
+        items.map((i) => `${i.id}:${i.quantity}`).join(',')
     );
 
-    // create PDF, upload, get link
     try {
       const pdfUrl = await generatePdfAndUpload({
         summary: items,
@@ -154,7 +162,7 @@ export default function Step6Recommendation({ formData }) {
     } catch (err) {
       console.error('quiz finishing error:', err);
     } finally {
-      setLoading(false);   // always clear spinner
+      setLoading(false);
     }
   };
 
@@ -166,7 +174,9 @@ export default function Step6Recommendation({ formData }) {
       kids: formData.kids,
       uses_cold_pressed: formData.usesColdPressed,
       current_oils: formData.currentOils,
-      recommended_oils: recommendedOils.map(r => `${r.name} - ${r.quantity}L`)
+      recommended_oils: recommendedOils.map(
+        (r) => `${r.name} - ${r.quantity}L`
+      ),
     });
 
     const qs = new URLSearchParams({
@@ -176,13 +186,16 @@ export default function Step6Recommendation({ formData }) {
       numChildren: formData.kids,
       coldPressUser: formData.usesColdPressed ? 'Yes' : 'No',
       oilChoices: formData.currentOils?.join(', '),
-      recommendation: recommendedOils.map(r => `${r.name} - ${r.quantity}L`).join(', '),
+      recommendation: recommendedOils
+        .map((r) => `${r.name} - ${r.quantity}L`)
+        .join(', '),
       value: value.toString(),
-      pdfUrl
+      pdfUrl,
     }).toString();
 
     new Image().src =
-      'https://script.google.com/macros/s/AKfycbw-atgx_I4x508IA5ms5wQ_cji2kgsdqpxsv-AM1EYU2tmR7e9nTTc606eXsO4TjqSi5w/exec?' + qs;
+      'https://script.google.com/macros/s/AKfycbw-atgx_I4x508IA5ms5wQ_cji2kgsdqpxsv-AM1EYU2tmR7e9nTTc606eXsO4TjqSi5w/exec?' +
+      qs;
 
     setSubmitted(true);
   };
