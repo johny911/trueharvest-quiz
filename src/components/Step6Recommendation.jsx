@@ -24,9 +24,9 @@ const VARIANT_MAP = {
   },
 };
 
-// helper: render <FinalReport> invisibly → html2pdf → upload → return URL
+// helper: render <FinalReport> off-screen → html2pdf → upload → return URL
 async function generatePdfAndUpload({ summary, formData, totalPrice }) {
-  // 1. mount FinalReport off-screen
+  // 1. mount FinalReport invisibly
   const container = document.createElement('div');
   container.style.position = 'fixed';
   container.style.left = '-9999px';
@@ -42,16 +42,19 @@ async function generatePdfAndUpload({ summary, formData, totalPrice }) {
     />
   );
 
-  // wait a tick for images/fonts
+  // give images / fonts a beat to load
   await new Promise((r) => setTimeout(r, 300));
 
-  // 2. generate PDF (1080 px × auto, retina scale 2)
+  // calculate actual height of rendered card
+  const width  = 1080;                 // px
+  const height = container.scrollHeight || 1500; // fallback if 0
+
+  // 2. convert HTML → PDF
   const blob = await html2pdf()
     .set({
       margin: 0,
-      filename: `quiz-${Date.now()}.pdf`,
       html2canvas: { scale: 2 },
-      jsPDF: { unit: 'px', format: [1080, 'auto'] },
+      jsPDF: { unit: 'px', format: [width, height] },
     })
     .from(container)
     .outputPdf('blob');
@@ -60,7 +63,7 @@ async function generatePdfAndUpload({ summary, formData, totalPrice }) {
   root.unmount();
   container.remove();
 
-  // 3. upload to Supabase
+  // 3. upload PDF to Supabase
   const path = `quiz-${Date.now()}.pdf`;
   const { data, error } = await supabase
     .storage
@@ -117,13 +120,9 @@ export default function Step6Recommendation({ formData }) {
         const { handle, ...variants } = VARIANT_MAP[name];
         const variantId = variants[sizeKey];
 
-        const res = await fetch(
-          `https://trueharvest.store/products/${handle}.js`
-        );
+        const res = await fetch(`https://trueharvest.store/products/${handle}.js`);
         const data = await res.json();
-        const variant = data.variants.find(
-          (v) => v.id.toString() === variantId
-        );
+        const variant = data.variants.find((v) => v.id.toString() === variantId);
 
         const qty = Math.max(Math.round(quantity), 1);
         const price = parseFloat(variant.price) / 100;
@@ -174,9 +173,7 @@ export default function Step6Recommendation({ formData }) {
       kids: formData.kids,
       uses_cold_pressed: formData.usesColdPressed,
       current_oils: formData.currentOils,
-      recommended_oils: recommendedOils.map(
-        (r) => `${r.name} - ${r.quantity}L`
-      ),
+      recommended_oils: recommendedOils.map((r) => `${r.name} - ${r.quantity}L`),
     });
 
     const qs = new URLSearchParams({
@@ -186,16 +183,13 @@ export default function Step6Recommendation({ formData }) {
       numChildren: formData.kids,
       coldPressUser: formData.usesColdPressed ? 'Yes' : 'No',
       oilChoices: formData.currentOils?.join(', '),
-      recommendation: recommendedOils
-        .map((r) => `${r.name} - ${r.quantity}L`)
-        .join(', '),
+      recommendation: recommendedOils.map((r) => `${r.name} - ${r.quantity}L`).join(', '),
       value: value.toString(),
       pdfUrl,
     }).toString();
 
     new Image().src =
-      'https://script.google.com/macros/s/AKfycbw-atgx_I4x508IA5ms5wQ_cji2kgsdqpxsv-AM1EYU2tmR7e9nTTc606eXsO4TjqSi5w/exec?' +
-      qs;
+      'https://script.google.com/macros/s/AKfycbw-atgx_I4x508IA5ms5wQ_cji2kgsdqpxsv-AM1EYU2tmR7e9nTTc606eXsO4TjqSi5w/exec?' + qs;
 
     setSubmitted(true);
   };
