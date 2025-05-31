@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import recommendOils from '../utils/recommendOils';
 import FinalReport from './FinalReport';
+import { PDFDocument, StandardFonts } from 'pdf-lib';   // PDF builder
 
 const VARIANT_MAP = {
   'Groundnut Oil': {
@@ -22,6 +23,48 @@ const VARIANT_MAP = {
   },
 };
 
+// helper: build a minimal PDF, upload to Supabase, return public URL
+async function generatePdfAndUpload({ summary, formData, totalPrice }) {
+  const pdf = await PDFDocument.create();
+  const page = pdf.addPage();
+  const font = await pdf.embedFont(StandardFonts.Helvetica);
+  let y = page.getHeight() - 40;
+
+  page.drawText('True Harvest – Your Personal Oil Plan', { x: 50, y, size: 16, font });
+  y -= 25;
+  page.drawText(`Name: ${formData.name}`, { x: 50, y, size: 12, font });
+  y -= 20;
+
+  summary.forEach(item => {
+    page.drawText(`• ${item.title} × ${item.quantity}`, { x: 50, y, size: 12, font });
+    y -= 15;
+  });
+
+  y -= 15;
+  page.drawText(`Estimated Total: ₹${totalPrice.toFixed(2)}`, { x: 50, y, size: 12, font });
+
+  const pdfBytes = await pdf.save();
+  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+
+  const path = `quiz-${Date.now()}.pdf`;
+  const { data, error } = await supabase
+    .storage
+    .from('trueharvest-recommender')
+    .upload(path, blob, { contentType: 'application/pdf' });
+
+  if (error) {
+    console.error('PDF upload failed:', error);
+    return '';
+  }
+
+  const { publicUrl } = supabase
+    .storage
+    .from('trueharvest-recommender')
+    .getPublicUrl(data.path);
+
+  return publicUrl;
+}
+
 export default function Step6Recommendation({ formData }) {
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
@@ -30,7 +73,7 @@ export default function Step6Recommendation({ formData }) {
   const [cartUrl, setCartUrl] = useState('');
 
   useEffect(() => {
-    // preload all relevant icons during loading
+    // preload icons during loading
     [
       '/images/inflammation.png',
       '/images/heart.png',
@@ -91,13 +134,19 @@ export default function Step6Recommendation({ formData }) {
       'https://trueharvest.store/cart/' +
       items.map(i => `${i.id}:${i.quantity}`).join(',')
     );
-    setLoading(false);
 
-    // submit once total is calculated
-    submitToSupabase(recs, total);
+    // create PDF, upload, get link
+    const pdfUrl = await generatePdfAndUpload({
+      summary: items,
+      formData,
+      totalPrice: total,
+    });
+
+    await submitToSupabase(recs, total, pdfUrl);
+    setLoading(false);
   };
 
-  const submitToSupabase = async (recommendedOils, value) => {
+  const submitToSupabase = async (recommendedOils, value, pdfUrl) => {
     await supabase.from('quiz_responses').insert({
       name: formData.name,
       phone: formData.phone,
@@ -113,14 +162,15 @@ export default function Step6Recommendation({ formData }) {
       phone: formData.phone,
       numAdults: formData.adults,
       numChildren: formData.kids,
-      coldPressUser: formData.usesColdPressed ? "Yes" : "No",
-      oilChoices: formData.currentOils?.join(", "),
-      recommendation: recommendedOils.map(r => `${r.name} - ${r.quantity}L`).join(", "),
-      value: value.toString()
+      coldPressUser: formData.usesColdPressed ? 'Yes' : 'No',
+      oilChoices: formData.currentOils?.join(', '),
+      recommendation: recommendedOils.map(r => `${r.name} - ${r.quantity}L`).join(', '),
+      value: value.toString(),
+      pdfUrl                                      // new field
     }).toString();
 
     new Image().src =
-      "https://script.google.com/macros/s/AKfycbw-atgx_I4x508IA5ms5wQ_cji2kgsdqpxsv-AM1EYU2tmR7e9nTTc606eXsO4TjqSi5w/exec?" + qs;
+      'https://script.google.com/macros/s/AKfycbw-atgx_I4x508IA5ms5wQ_cji2kgsdqpxsv-AM1EYU2tmR7e9nTTc606eXsO4TjqSi5w/exec?' + qs;
 
     setSubmitted(true);
   };
