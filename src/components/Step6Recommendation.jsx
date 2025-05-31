@@ -25,23 +25,30 @@ const VARIANT_MAP = {
 
 // helper: build a minimal PDF, upload to Supabase, return public URL
 async function generatePdfAndUpload({ summary, formData, totalPrice }) {
-  const pdf = await PDFDocument.create();
+  const pdf  = await PDFDocument.create();
   const page = pdf.addPage();
   const font = await pdf.embedFont(StandardFonts.Helvetica);
+
+  // replace glyphs WinAnsi can’t encode (₹, ×, •)
+  const safe = (s) =>
+    s.replace(/₹/g, 'Rs')
+     .replace(/×/g, 'x')
+     .replace(/•/g, '-');
+
   let y = page.getHeight() - 40;
 
   page.drawText('True Harvest – Your Personal Oil Plan', { x: 50, y, size: 16, font });
   y -= 25;
-  page.drawText(`Name: ${formData.name}`, { x: 50, y, size: 12, font });
+  page.drawText(`Name: ${safe(formData.name)}`, { x: 50, y, size: 12, font });
   y -= 20;
 
   summary.forEach(item => {
-    page.drawText(`• ${item.title} × ${item.quantity}`, { x: 50, y, size: 12, font });
+    page.drawText(`${safe('- ' + item.title)} x ${item.quantity}`, { x: 50, y, size: 12, font });
     y -= 15;
   });
 
   y -= 15;
-  page.drawText(`Estimated Total: ₹${totalPrice.toFixed(2)}`, { x: 50, y, size: 12, font });
+  page.drawText(`Estimated Total: Rs ${totalPrice.toFixed(2)}`, { x: 50, y, size: 12, font });
 
   const pdfBytes = await pdf.save();
   const blob = new Blob([pdfBytes], { type: 'application/pdf' });
@@ -50,7 +57,7 @@ async function generatePdfAndUpload({ summary, formData, totalPrice }) {
   const { data, error } = await supabase
     .storage
     .from('trueharvest-recommender')
-    .upload(path, blob, { contentType: 'application/pdf' });
+    .upload(path, blob, { contentType: 'application/pdf', upsert: true });
 
   if (error) {
     console.error('PDF upload failed:', error);
@@ -136,14 +143,19 @@ export default function Step6Recommendation({ formData }) {
     );
 
     // create PDF, upload, get link
-    const pdfUrl = await generatePdfAndUpload({
-      summary: items,
-      formData,
-      totalPrice: total,
-    });
+    try {
+      const pdfUrl = await generatePdfAndUpload({
+        summary: items,
+        formData,
+        totalPrice: total,
+      });
 
-    await submitToSupabase(recs, total, pdfUrl);
-    setLoading(false);
+      await submitToSupabase(recs, total, pdfUrl);
+    } catch (err) {
+      console.error('quiz finishing error:', err);
+    } finally {
+      setLoading(false);   // always clear spinner
+    }
   };
 
   const submitToSupabase = async (recommendedOils, value, pdfUrl) => {
@@ -166,7 +178,7 @@ export default function Step6Recommendation({ formData }) {
       oilChoices: formData.currentOils?.join(', '),
       recommendation: recommendedOils.map(r => `${r.name} - ${r.quantity}L`).join(', '),
       value: value.toString(),
-      pdfUrl                                      // new field
+      pdfUrl
     }).toString();
 
     new Image().src =
