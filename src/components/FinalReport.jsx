@@ -273,30 +273,39 @@ export default function FinalReport({
           </p>
         </div>
 
+        {/* Debug-enhanced Buy Now Button */}
         <div className="sticky bottom-0 bg-white pt-4">
           <div className="flex justify-between pt-2 border-t">
             <span className="text-base font-semibold text-gray-800">Total</span>
             <div className="flex flex-col items-end">
               <span className="text-base font-semibold text-gray-800">
-                <span className="line-through mr-2">₹{originalTotal.toFixed(2)}</span>₹{totalPrice.toFixed(2)}
+                <span className="line-through mr-2">₹{originalTotal.toFixed(2)}</span>
+                ₹{totalPrice.toFixed(2)}
               </span>
               <span className="text-xs text-gray-500">Inclusive of all taxes</span>
             </div>
           </div>
+
           <button
             onClick={async () => {
               try {
-                await fetch('https://trueharvest.store/cart/clear.js', {
+                console.log('🧹 Clearing cart...');
+                const clearRes = await fetch('https://trueharvest.store/cart/clear.js', {
                   method: 'POST',
-                  credentials: 'include'
+                  credentials: 'include',
                 });
+
+                const cleared = await clearRes.text();
+                console.log('🧹 Cart cleared:', cleared);
 
                 const items = summary.map((item) => ({
                   id: item.id,
                   quantity: item.quantity
                 }));
 
-                await fetch('https://trueharvest.store/cart/add.js', {
+                console.log('🛒 Adding items:', items);
+
+                const addRes = await fetch('https://trueharvest.store/cart/add.js', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
@@ -305,18 +314,22 @@ export default function FinalReport({
                   body: JSON.stringify({ items })
                 });
 
+                const added = await addRes.json();
+                console.log('✅ Items added:', added);
+
                 window.location.href = 'https://trueharvest.store/cart';
               } catch (err) {
-                console.error('Cart update failed:', err);
-                alert('Something went wrong. Please try again.');
+                console.error('❌ Full Error:', err);
+                alert('Something went wrong. Check console for details.');
               }
             }}
             className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition mt-3"
           >
             Buy Now
           </button>
+
           <p className="text-center text-xs text-gray-400 mt-2">
-            Make the switch. Your health deserves better..
+            Make the switch. Your health deserves better.
           </p>
         </div>
       </div>
