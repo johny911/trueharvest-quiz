@@ -316,7 +316,7 @@ export default function FinalReport({
             Buy Now
           </button>
           <p className="text-center text-xs text-gray-400 mt-2">
-            Make the switch. Your health deserves better.
+            Make the switch. Your health deserves better..
           </p>
         </div>
       </div>
