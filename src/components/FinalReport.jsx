@@ -14,6 +14,7 @@ export default function FinalReport({
   const [summary, setSummary] = useState(initialSummary);
   const [totalPrice, setTotalPrice] = useState(initialTotalPrice);
 
+  // Compute original total (using compareAtPrice where available)
   const originalTotal = summary.reduce(
     (acc, item) =>
       acc + (item.compareAtPrice ?? item.price) * item.quantity,
@@ -112,8 +113,15 @@ export default function FinalReport({
     return 'GMO Free';
   };
 
+  // Dynamically rebuild the cart URL so it reflects any quantity changes
+  const checkoutUrl =
+    'https://trueharvest.store/cart/' +
+    summary.map((item) => `${item.id}:${item.quantity}`).join(',');
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start px-4 py-1">
+
+      {/* Start Over button above the white container */}
       <div className="w-full max-w-2xl flex justify-end mb-2">
         <button
           onClick={() => window.location.reload()}
@@ -124,6 +132,7 @@ export default function FinalReport({
       </div>
 
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 flex flex-col space-y-6">
+        {/* Greeting */}
         <div className="space-y-1 text-center">
           <h1 className="text-2xl font-bold text-gray-800">Hi {formData?.name},</h1>
           <p className="text-sm text-gray-600">
@@ -131,6 +140,7 @@ export default function FinalReport({
           </p>
         </div>
 
+        {/* Conditional section */}
         {!formData.usesColdPressed ? (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4">
             <h2 className="text-base font-semibold text-red-700 mb-3">
@@ -195,6 +205,7 @@ export default function FinalReport({
           </div>
         )}
 
+        {/* Recommendations list */}
         <div className="space-y-3 overflow-auto">
           <h2 className="text-base font-semibold text-gray-800">
             Your Oil Plan for the Next 30 Days
@@ -242,6 +253,7 @@ export default function FinalReport({
           ))}
         </div>
 
+        {/* What makes our oils different? */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-4">
           <h2 className="text-base font-semibold text-green-700 mb-3">
             What makes our oils different?
@@ -273,61 +285,23 @@ export default function FinalReport({
           </p>
         </div>
 
-        {/* Debug-enhanced Buy Now Button */}
+        {/* Sticky footer */}
         <div className="sticky bottom-0 bg-white pt-4">
           <div className="flex justify-between pt-2 border-t">
             <span className="text-base font-semibold text-gray-800">Total</span>
             <div className="flex flex-col items-end">
               <span className="text-base font-semibold text-gray-800">
-                <span className="line-through mr-2">₹{originalTotal.toFixed(2)}</span>
-                ₹{totalPrice.toFixed(2)}
+                <span className="line-through mr-2">₹{originalTotal.toFixed(2)}</span>₹{totalPrice.toFixed(2)}
               </span>
               <span className="text-xs text-gray-500">Inclusive of all taxes</span>
             </div>
           </div>
-
-          <button
-            onClick={async () => {
-              try {
-                console.log('🧹 Clearing cart...');
-                const clearRes = await fetch('https://trueharvest.store/cart/clear.js', {
-                  method: 'POST',
-                  credentials: 'include',
-                });
-
-                const cleared = await clearRes.text();
-                console.log('🧹 Cart cleared:', cleared);
-
-                const items = summary.map((item) => ({
-                  id: item.id,
-                  quantity: item.quantity
-                }));
-
-                console.log('🛒 Adding items:', items);
-
-                const addRes = await fetch('https://trueharvest.store/cart/add.js', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  credentials: 'include',
-                  body: JSON.stringify({ items })
-                });
-
-                const added = await addRes.json();
-                console.log('✅ Items added:', added);
-
-                window.location.href = 'https://trueharvest.store/cart';
-              } catch (err) {
-                console.error('❌ Full Error:', err);
-                alert('Something went wrong. Check console for details.');
-              }
-            }}
+          <a
+            href={checkoutUrl}
             className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition mt-3"
           >
             Buy Now
-          </button>
-
+          </a>
           <p className="text-center text-xs text-gray-400 mt-2">
             Make the switch. Your health deserves better.
           </p>
