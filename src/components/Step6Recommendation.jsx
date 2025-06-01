@@ -140,7 +140,7 @@ export default function Step6Recommendation({ formData }) {
     <div className="w-full">
       <div className="bg-white shadow-xl rounded-2xl p-6 space-y-6">
         <p className="text-center text-gray-500 text-sm">
-          Calculating your recommendation...
+          Calculating your recommendation....
         </p>
       </div>
     </div>
