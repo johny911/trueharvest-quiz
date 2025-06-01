@@ -286,22 +286,26 @@ export default function FinalReport({
           <button
             onClick={async () => {
               try {
-                await fetch('/cart/clear.js', { method: 'POST' });
+                await fetch('https://trueharvest.store/cart/clear.js', {
+                  method: 'POST',
+                  credentials: 'include'
+                });
 
                 const items = summary.map((item) => ({
                   id: item.id,
                   quantity: item.quantity
                 }));
 
-                await fetch('/cart/add.js', {
+                await fetch('https://trueharvest.store/cart/add.js', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
                   },
+                  credentials: 'include',
                   body: JSON.stringify({ items })
                 });
 
-                window.location.href = '/cart';
+                window.location.href = 'https://trueharvest.store/cart';
               } catch (err) {
                 console.error('Cart update failed:', err);
                 alert('Something went wrong. Please try again.');
