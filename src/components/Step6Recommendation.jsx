@@ -88,12 +88,11 @@ export default function Step6Recommendation({ formData }) {
     setSummary(items);
     setTotalPrice(total);
     setCartUrl(
-      'https://trueharvest.store/cart/' +
+      'https://trueharvest.store/cart?items=' +
       items.map(i => `${i.id}:${i.quantity}`).join(',')
     );
     setLoading(false);
 
-    // submit once total is calculated
     submitToSupabase(recs, total);
   };
 
