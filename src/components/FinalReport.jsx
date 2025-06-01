@@ -14,7 +14,6 @@ export default function FinalReport({
   const [summary, setSummary] = useState(initialSummary);
   const [totalPrice, setTotalPrice] = useState(initialTotalPrice);
 
-  // Compute original total (using compareAtPrice where available)
   const originalTotal = summary.reduce(
     (acc, item) =>
       acc + (item.compareAtPrice ?? item.price) * item.quantity,
@@ -113,15 +112,8 @@ export default function FinalReport({
     return 'GMO Free';
   };
 
-  // Dynamically rebuild the cart URL so it reflects any quantity changes
-  const checkoutUrl =
-    'https://trueharvest.store/cart/' +
-    summary.map((item) => `${item.id}:${item.quantity}`).join(',');
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start px-4 py-1">
-
-      {/* Start Over button above the white container */}
       <div className="w-full max-w-2xl flex justify-end mb-2">
         <button
           onClick={() => window.location.reload()}
@@ -132,7 +124,6 @@ export default function FinalReport({
       </div>
 
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 flex flex-col space-y-6">
-        {/* Greeting */}
         <div className="space-y-1 text-center">
           <h1 className="text-2xl font-bold text-gray-800">Hi {formData?.name},</h1>
           <p className="text-sm text-gray-600">
@@ -140,7 +131,6 @@ export default function FinalReport({
           </p>
         </div>
 
-        {/* Conditional section */}
         {!formData.usesColdPressed ? (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4">
             <h2 className="text-base font-semibold text-red-700 mb-3">
@@ -205,7 +195,6 @@ export default function FinalReport({
           </div>
         )}
 
-        {/* Recommendations list */}
         <div className="space-y-3 overflow-auto">
           <h2 className="text-base font-semibold text-gray-800">
             Your Oil Plan for the Next 30 Days
@@ -253,7 +242,6 @@ export default function FinalReport({
           ))}
         </div>
 
-        {/* What makes our oils different? */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-4">
           <h2 className="text-base font-semibold text-green-700 mb-3">
             What makes our oils different?
@@ -285,7 +273,6 @@ export default function FinalReport({
           </p>
         </div>
 
-        {/* Sticky footer */}
         <div className="sticky bottom-0 bg-white pt-4">
           <div className="flex justify-between pt-2 border-t">
             <span className="text-base font-semibold text-gray-800">Total</span>
@@ -296,12 +283,34 @@ export default function FinalReport({
               <span className="text-xs text-gray-500">Inclusive of all taxes</span>
             </div>
           </div>
-          <a
-            href={checkoutUrl}
+          <button
+            onClick={async () => {
+              try {
+                await fetch('/cart/clear.js', { method: 'POST' });
+
+                const items = summary.map((item) => ({
+                  id: item.id,
+                  quantity: item.quantity
+                }));
+
+                await fetch('/cart/add.js', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ items })
+                });
+
+                window.location.href = '/cart';
+              } catch (err) {
+                console.error('Cart update failed:', err);
+                alert('Something went wrong. Please try again.');
+              }
+            }}
             className="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl text-center transition mt-3"
           >
             Buy Now
-          </a>
+          </button>
           <p className="text-center text-xs text-gray-400 mt-2">
             Make the switch. Your health deserves better.
           </p>
